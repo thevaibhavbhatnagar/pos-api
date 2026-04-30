@@ -3,10 +3,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { RoleModule } from './role/role.module';
+import { BranchModule } from './branch/branch.module';
+import { DeletionGuardModule } from './common/deletion-guard/deletion-guard.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
+  imports: [PrismaModule, AuthModule, RoleModule, BranchModule,DeletionGuardModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
