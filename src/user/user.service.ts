@@ -1,0 +1,176 @@
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
+import { ensureExists } from '../common/prisma/ensure-exists';
+import { Prisma } from 'src/generated/prisma/client';
+
+@Injectable()
+export class UserService {
+  // Inject PrismaService into UserService
+  constructor(private prisma: PrismaService) {}
+
+  private ensureRoleExists(tx: Prisma.TransactionClient, id: string) {
+    return ensureExists(
+      tx.role.findFirst({
+        where: { id, deletedAt: null },
+        select: { id: true },
+      }),
+      'role not found',
+    );
+  }
+
+  async findAll(page: number = 1, limit: number = 10) {
+    // safety
+    page = Math.max(1, Number(page) || 1);
+    limit = Math.min(100, Math.max(1, Number(limit) || 10)); // max 100
+
+    const skip = (page - 1) * limit;
+
+    const [users, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          name: true, 
+          roleId: true,
+          role: {
+            select: {
+              name: true,
+              id: true,
+            },
+          }, 
+          branchId: true,
+          branch: {
+            select: {
+              name: true,
+              id: true,
+            },
+          }, 
+        },
+        orderBy: { id: 'desc' },
+        take: limit,
+        skip,
+      }),
+      this.prisma.user.count(),
+    ]);
+
+    return {
+      message: 'Users fetched successfully',
+      data: users,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async findOne(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        branchId: true,
+        branch: true,
+        roleId: true,
+        role: {
+          select: {
+            name: true,
+            id: true,
+            permissions: {
+              select: {
+                permissionId: true,
+              },
+            },
+          },
+        }, 
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      message: 'User fetched successfully',
+      data: user,
+    };
+  }
+
+  async create(dto: CreateUserDto) {
+    // Check if a user with the given email already exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    // If user exists, throw a conflict exception
+    if (existingUser) {
+      throw new ConflictException('Email already registered');
+    }
+
+    await this.ensureRoleExists(this.prisma, dto.roleId);
+
+    // Hash the user's password before saving it to the database
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        password: hashedPassword,
+        name: dto.name,
+        roleId: dto.roleId,
+        branchId: dto.branchId,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        roleId: true, 
+      },
+    });
+    return {
+      message: 'user created successfully',
+      data: user,
+    };
+  }
+
+  async update(id: string, dto: UpdateUserDto) {
+    // ensure user exists
+    await this.findOne(id);
+
+    if (dto.roleId) {
+      await this.ensureRoleExists(this.prisma, dto.roleId);
+    }
+
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: dto,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        roleId: true, 
+        branchId: true,
+      },
+    });
+
+    return {
+      message: 'User updated successfully',
+      data: user,
+    };
+  }
+
+  async remove(id: string) {
+    await this.findOne(id);
+    await this.prisma.user.delete({ where: { id } });
+    return { message: 'User deleted successfully' };
+  }
+}

@@ -6,9 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { RoleModule } from './role/role.module';
 import { BranchModule } from './branch/branch.module';
 import { DeletionGuardModule } from './common/deletion-guard/deletion-guard.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, RoleModule, BranchModule,DeletionGuardModule],
+  imports: [PrismaModule, AuthModule, RoleModule, BranchModule,UserModule,DeletionGuardModule],
   controllers: [AppController],
   providers: [AppService],
 })
