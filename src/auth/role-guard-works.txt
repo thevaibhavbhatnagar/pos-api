@@ -1,0 +1,13 @@
+@Roles('ADMIN')
+      ↓
+Metadata set
+      ↓
+Request → JWT verify
+      ↓
+req.user = { role: USER }
+      ↓
+RolesGuard read metadata
+      ↓
+Compare roles
+      ↓
+❌ deny OR ✅ allow
