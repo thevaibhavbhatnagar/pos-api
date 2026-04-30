@@ -20,7 +20,8 @@ export class AuthService {
   async login(dto: LoginDto) {
     // Find user in the database by email
     const user = await this.prisma.user.findUnique({
-      where: { email: dto.email },include: { role: true },
+      where: { email: dto.email },
+      include: { role: true , branch: true,},
     });
 
     if (!user) {
@@ -47,6 +48,14 @@ export class AuthService {
     return {
       message: 'Login Successful',
       accessToken: token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role.name,
+        branchId: user.branchId,
+        branchName: user.branch?.name || null,
+      },
     };
   }
 }
