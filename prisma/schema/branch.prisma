@@ -1,0 +1,12 @@
+model Branch {
+  id        String   @id @default(uuid())
+  name      String
+  address   String?
+  phone     String?
+
+  users     User[]
+//   orders    Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
