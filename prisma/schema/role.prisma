@@ -1,8 +1,0 @@
-model Role {
-  id        String   @id @default(uuid())
-  name      String   @unique   // ADMIN, USER
-
-  users     User[]
-
-  createdAt DateTime @default(now())
-}

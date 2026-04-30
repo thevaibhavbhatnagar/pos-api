@@ -7,8 +7,8 @@ model User {
     roleId String
     role   Role   @relation(fields: [roleId], references: [id])
 
-    branchId String
-    branch   Branch @relation(fields: [branchId], references: [id])
+    branchId String? // ✅ optional
+    branch   Branch? @relation(fields: [branchId], references: [id])
 
     // orders    Order[]
 

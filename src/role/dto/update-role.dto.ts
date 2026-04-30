@@ -1,0 +1,13 @@
+// src/role/dto/update-role.dto.ts
+import { IsArray, IsOptional, IsString } from 'class-validator';
+
+export class UpdateRoleDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  permissionIds ?: string[];
+}

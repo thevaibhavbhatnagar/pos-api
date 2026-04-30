@@ -23,10 +23,25 @@ export * from './enums.js';
  */
 export type Branch = Prisma.BranchModel
 /**
+ * Model Module
+ * 
+ */
+export type Module = Prisma.ModuleModel
+/**
  * Model Role
  * 
  */
 export type Role = Prisma.RoleModel
+/**
+ * Model Permission
+ * 
+ */
+export type Permission = Prisma.PermissionModel
+/**
+ * Model RolePermission
+ * 
+ */
+export type RolePermission = Prisma.RolePermissionModel
 /**
  * Model User
  * 
