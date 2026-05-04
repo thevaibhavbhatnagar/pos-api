@@ -31,6 +31,22 @@ export class BranchService {
   //     }
   // }
 
+  async getPublicBranches() {
+    const branches = await this.prisma.branch.findMany({
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      message: 'Public branches fetched successfully',
+      data: branches,
+    };
+  }
+
   async findAll(page: number = 1, limit: number = 10) {
     // safety
     page = Math.max(1, Number(page) || 1);
