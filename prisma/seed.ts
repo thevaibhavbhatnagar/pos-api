@@ -58,8 +58,8 @@ const modules: ModuleTree[] = [
     key: 'management',
     icon: 'Settings',
     children: [
-      { key: 'products', url: '/products' },
       { key: 'categories', url: '/categories' },
+      { key: 'products', url: '/products' },
       { key: 'users', url: '/users' },
       { key: 'branches', url: '/branches' },
       { key: 'roles', url: '/roles' },

@@ -23,10 +23,30 @@ export * from './enums.js';
  */
 export type Branch = Prisma.BranchModel
 /**
+ * Model Category
+ * 
+ */
+export type Category = Prisma.CategoryModel
+/**
  * Model Module
  * 
  */
 export type Module = Prisma.ModuleModel
+/**
+ * Model Order
+ * 
+ */
+export type Order = Prisma.OrderModel
+/**
+ * Model OrderItem
+ * 
+ */
+export type OrderItem = Prisma.OrderItemModel
+/**
+ * Model Product
+ * 
+ */
+export type Product = Prisma.ProductModel
 /**
  * Model Role
  * 
