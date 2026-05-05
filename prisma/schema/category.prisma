@@ -1,12 +1,8 @@
 model Category {
-    id       String  @id @default(uuid())
-    name     String
-    isActive Boolean @default(true)
-
-    products Product[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@unique([name])
+  id        String    @id @default(uuid())
+  name      String    @unique
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
 }

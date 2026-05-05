@@ -1,18 +1,14 @@
 model Product {
-    id    String @id @default(uuid())
-    name  String
-    price Float
+  id            String      @id @default(uuid())
+  name          String
+  price         Float
+  isKotRequired Boolean     @default(true)
+  isActive      Boolean     @default(true)
+  categoryId    String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  orderItems    OrderItem[]
+  category      Category    @relation(fields: [categoryId], references: [id])
 
-    isKotRequired Boolean @default(true)
-    isActive      Boolean @default(true)
-
-    categoryId String
-    category   Category @relation(fields: [categoryId], references: [id])
-
-    orderItems OrderItem[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@index([categoryId])
+  @@index([categoryId])
 }

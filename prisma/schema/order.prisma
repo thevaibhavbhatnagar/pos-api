@@ -1,32 +1,24 @@
-
 model Order {
-  id            String      @id @default(uuid())
-  billNo        Int
-  totalAmount   Float 
-
-  branchId      String
-  branch        Branch     @relation(fields: [branchId], references: [id])
-
-  userId        String
-  user          User       @relation(fields: [userId], references: [id])
-
-  items         OrderItem[]
-
-  createdAt     DateTime   @default(now())
+  id          String      @id @default(uuid())
+  billNo      Int
+  totalAmount Float
+  branchId    String
+  userId      String
+  createdAt   DateTime    @default(now())
+  branch      Branch      @relation(fields: [branchId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
+  items       OrderItem[]
 
   @@index([branchId])
   @@index([createdAt])
 }
 
 model OrderItem {
-  id         String   @id @default(uuid())
-
-  orderId    String
-  productId  String
-
-  quantity   Int
-  price      Float
-
-  order      Order    @relation(fields: [orderId], references: [id])
-  product    Product  @relation(fields: [productId], references: [id])
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }

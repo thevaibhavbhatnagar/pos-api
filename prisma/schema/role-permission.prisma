@@ -1,41 +1,35 @@
 model Role {
-    id          String           @id @default(uuid())
-    name        String           @unique // "ADMIN", "PUBLISHER", "VIEWER"
-    users       User[]
-    permissions RolePermission[]
+  id          String           @id @default(uuid())
+  name        String           @unique
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  deletedAt   DateTime?        @map("deleted_at")
+  users       User[]
+  permissions RolePermission[]
 
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
-
-    @@map("roles")
+  @@map("roles")
 }
 
 model Permission {
-    id          String  @id @default(uuid())
-    key         String  @unique // "book:view"
-    description String?
+  id          String           @id @default(uuid())
+  key         String           @unique
+  description String?
+  moduleId    String           @map("module_id")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  module      Module           @relation(fields: [moduleId], references: [id])
+  roles       RolePermission[]
 
-    moduleId String @map("module_id")
-    module   Module @relation(fields: [moduleId], references: [id])
-
-    roles RolePermission[]
-
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
-
-    @@map("permissions")
+  @@map("permissions")
 }
 
 model RolePermission {
-    roleId       String @map("role_id")
-    permissionId String @map("permission_id")
+  roleId       String     @map("role_id")
+  permissionId String     @map("permission_id")
+  deletedAt    DateTime?  @map("deleted_at")
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
-    role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-    permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-
-    deletedAt DateTime? @map("deleted_at")
-
-    @@id([roleId, permissionId])
-    @@map("role_permissions")
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
 }

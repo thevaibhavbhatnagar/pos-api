@@ -1,22 +1,18 @@
 model Module {
-    id    String @id @default(uuid())
-    name  String @unique // "Books", "Users", "Roles"
-    key   String @unique // "book", "user", "role" (optional but useful)
-    order Int    @default(0) // for UI sorting (optional)
+  id          String       @id @default(uuid())
+  name        String       @unique
+  key         String       @unique
+  order       Int          @default(0)
+  icon        String?
+  url         String?
+  parentId    String?      @map("parent_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  deletedAt   DateTime?    @map("deleted_at")
+  parent      Module?      @relation("ModuleHierarchy", fields: [parentId], references: [id])
+  children    Module[]     @relation("ModuleHierarchy")
+  permissions Permission[]
 
-    icon String?
-    url  String?
-
-    parentId String?  @map("parent_id")
-    parent   Module?  @relation("ModuleHierarchy", fields: [parentId], references: [id])
-    children Module[] @relation("ModuleHierarchy")
-
-    permissions Permission[]
-
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
-
-    @@unique([parentId, name])
-    @@map("modules")
+  @@unique([parentId, name])
+  @@map("modules")
 }
