@@ -24,4 +24,3 @@ lerna-debug.log*
 .tmp
 
 /generated/prisma
-package-lock.json
