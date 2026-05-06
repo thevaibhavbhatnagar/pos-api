@@ -11,15 +11,16 @@ import { Prisma } from 'src/generated/prisma/client';
 
 @Injectable()
 export class ProductService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   // Reusable select (same style as Company/Publisher)
   private productSelect = {
     id: true,
     name: true,
     categoryId: true,
-    isKotRequired:true,
-    price:true,
+    category: { select: {id: true, name: true } },
+    isKotRequired: true,
+    price: true,
     isActive: true,
     createdAt: true,
   } as const;

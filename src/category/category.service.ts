@@ -48,6 +48,7 @@ export class CategoryService {
         select: {
           id: true,
           name: true,
+          isActive: true,
           createdAt: true,
         },
         orderBy: { createdAt: 'desc' },
