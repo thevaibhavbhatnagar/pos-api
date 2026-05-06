@@ -6,7 +6,7 @@ async function bootstrap() {
 
   // (CORS)
   app.enableCors({
-    origin: ['http://localhost:3001', 'http://192.168.1.19:3001', 'http://pos-system-chi-sooty.vercel.app'],
+    origin: ['http://localhost:3001', 'http://192.168.1.19:3001', 'https://pos-web-pi.vercel.app'],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
