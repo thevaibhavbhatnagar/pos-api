@@ -7,7 +7,7 @@ model User {
   updatedAt DateTime @updatedAt
   branchId  String?
   roleId    String
-  orders    Order[]
+  orders    Orders[]
   branch    Branch?  @relation(fields: [branchId], references: [id])
   role      Role     @relation(fields: [roleId], references: [id])
 

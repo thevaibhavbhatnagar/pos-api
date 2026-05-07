@@ -10,9 +10,10 @@ import { UserModule } from './user/user.module';
 import { PermissionModule } from './permission/permission.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, RoleModule, BranchModule,PermissionModule,CategoryModule,UserModule,DeletionGuardModule,ProductModule],
+  imports: [PrismaModule, AuthModule, RoleModule, BranchModule,PermissionModule,CategoryModule,UserModule,DeletionGuardModule,ProductModule,OrderModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -27,6 +27,11 @@ export class ProductController {
     return this.productService.getProductLookup();
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('category') 
+  getProductByCategory(@Query('category_id') category_id: string) {
+    return this.productService.getProductByCategory(category_id);
+  }
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get()
   @Roles('ADMIN')

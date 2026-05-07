@@ -54,7 +54,7 @@ export const ModelName = {
   Branch: 'Branch',
   Category: 'Category',
   Module: 'Module',
-  Order: 'Order',
+  Orders: 'Orders',
   OrderItem: 'OrderItem',
   Product: 'Product',
   Role: 'Role',
@@ -118,16 +118,23 @@ export const ModuleScalarFieldEnum = {
 export type ModuleScalarFieldEnum = (typeof ModuleScalarFieldEnum)[keyof typeof ModuleScalarFieldEnum]
 
 
-export const OrderScalarFieldEnum = {
+export const OrdersScalarFieldEnum = {
   id: 'id',
   billNo: 'billNo',
   totalAmount: 'totalAmount',
+  subTotal: 'subTotal',
+  discountAmount: 'discountAmount',
+  taxAmount: 'taxAmount',
+  paymentMethod: 'paymentMethod',
+  status: 'status',
+  notes: 'notes',
   branchId: 'branchId',
   userId: 'userId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
-export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+export type OrdersScalarFieldEnum = (typeof OrdersScalarFieldEnum)[keyof typeof OrdersScalarFieldEnum]
 
 
 export const OrderItemScalarFieldEnum = {
@@ -135,7 +142,8 @@ export const OrderItemScalarFieldEnum = {
   orderId: 'orderId',
   productId: 'productId',
   quantity: 'quantity',
-  price: 'price'
+  price: 'price',
+  total: 'total'
 } as const
 
 export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
@@ -189,13 +197,13 @@ export type RolePermissionScalarFieldEnum = (typeof RolePermissionScalarFieldEnu
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  name: 'name',
   email: 'email',
   password: 'password',
-  roleId: 'roleId',
-  branchId: 'branchId',
+  name: 'name',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  branchId: 'branchId',
+  roleId: 'roleId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]

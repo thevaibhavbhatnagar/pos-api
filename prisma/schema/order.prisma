@@ -1,13 +1,41 @@
-model Order {
-  id          String      @id @default(uuid())
-  billNo      Int
+enum PaymentMethod {
+  CASH
+  CARD
+  UPI
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+model Orders {
+  id String @id @default(uuid())
+
+  billNo      String @unique
   totalAmount Float
-  branchId    String
-  userId      String
-  createdAt   DateTime    @default(now())
-  branch      Branch      @relation(fields: [branchId], references: [id])
-  user        User        @relation(fields: [userId], references: [id])
-  items       OrderItem[]
+
+  subTotal       Float?
+  discountAmount Float? @default(0)
+  taxAmount      Float? @default(0)
+
+  paymentMethod PaymentMethod
+  status        OrderStatus   @default(COMPLETED)
+
+  notes String?
+
+  branchId String
+  userId   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  branch Branch @relation(fields: [branchId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  items OrderItem[]
 
   @@index([branchId])
   @@index([createdAt])
@@ -19,6 +47,7 @@ model OrderItem {
   productId String
   quantity  Int
   price     Float
-  order     Order   @relation(fields: [orderId], references: [id])
+  total     Float
+  order     Orders   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
 }

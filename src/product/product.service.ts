@@ -51,6 +51,27 @@ export class ProductService {
     };
   }
 
+  async getProductByCategory(category_id: string) {
+    const products = await this.prisma.product.findMany({
+      where: category_id ? { categoryId: category_id } : {},
+      select: {
+        id: true,
+        name: true,
+        categoryId: true,
+        category: { select: { id: true, name: true } },
+        isKotRequired: true,
+        price: true,
+        isActive: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    return {
+      message: 'Category products fetched successfully',
+      data: products,
+    };
+  }
+
   async findAll(page: number = 1, limit: number = 10) {
     // safety
     page = Math.max(1, Number(page) || 1);

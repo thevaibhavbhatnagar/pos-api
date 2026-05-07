@@ -5,6 +5,6 @@ model Branch {
   phone     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  orders    Order[]
+  orders    Orders[]
   users     User[]
 }
