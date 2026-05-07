@@ -25,6 +25,7 @@ export class OrderService {
 
     paymentMethod: true,
     status: true,
+    paymentStatus:true,
 
     notes: true,
 
@@ -211,9 +212,19 @@ export class OrderService {
         select: this.orderSelect,
       });
 
+      // Create KOT
+      const kot = await tx.kot.create({
+        data: {
+          kotNo: `KOT-${Date.now()}`,
+          orderId: order.id,
+          status: 'PENDING',
+        },
+      });
+
       return {
         message: 'Order created successfully',
         data: order,
+        kot,
       };
     });
   }

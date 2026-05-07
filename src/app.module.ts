@@ -11,9 +11,22 @@ import { PermissionModule } from './permission/permission.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
+import { KotModule } from './kot/kot.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, RoleModule, BranchModule,PermissionModule,CategoryModule,UserModule,DeletionGuardModule,ProductModule,OrderModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    RoleModule,
+    BranchModule,
+    PermissionModule,
+    CategoryModule,
+    UserModule,
+    DeletionGuardModule,
+    ProductModule,
+    OrderModule,
+    KotModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

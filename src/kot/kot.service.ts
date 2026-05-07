@@ -1,0 +1,188 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
+import { ensureExists } from '../common/prisma/ensure-exists';
+import { Prisma } from 'src/generated/prisma/client';
+import { AddKotDto } from './dto/add-kot.dto';
+import { UpdateKotDto } from './dto/update-kot.dto';
+
+@Injectable()
+export class KotService {
+  constructor(private prisma: PrismaService) {}
+
+  // Reusable select (same style as Company/Publisher)
+  private kotSelect = {
+    id: true,
+
+    kotNo: true,
+
+    orderId: true,
+    order: {
+      select: {
+        id: true,
+        billNo: true,
+        totalAmount: true,
+        status: true,
+
+        branchId: true,
+        branch: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+
+        userId: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        items: {
+          select: {
+            id: true,
+            quantity: true,
+            price: true,
+            total: true,
+
+            productId: true,
+            product: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+              },
+            },
+          },
+        },
+
+        createdAt: true,
+        updatedAt: true,
+      },
+    },
+
+    status: true,
+
+    createdAt: true,
+  } as const;
+
+  private ensureKotExists(tx: Prisma.TransactionClient, id: string) {
+    return ensureExists(
+      tx.kot.findFirst({
+        where: { id },
+        select: { id: true },
+      }),
+      'kot not found',
+    );
+  }
+
+  async findAll(page: number = 1, limit: number = 10) {
+    // safety
+    page = Math.max(1, Number(page) || 1);
+    limit = Math.min(100, Math.max(1, Number(limit) || 10)); // max 100
+
+    const skip = (page - 1) * limit;
+
+    const [products, total] = await this.prisma.$transaction([
+      this.prisma.kot.findMany({
+        select: this.kotSelect,
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip,
+      }),
+      this.prisma.kot.count(),
+    ]);
+
+    return {
+      message: 'kots fetched successfully',
+      data: products,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async findOne(id: string) {
+    const kot = await this.prisma.kot.findUnique({
+      where: { id },
+      select: this.kotSelect,
+    });
+
+    if (!kot) {
+      throw new NotFoundException('kot not found');
+    }
+
+    return {
+      message: 'kot fetched successfully',
+      data: kot,
+    };
+  }
+
+  async create(dto: AddKotDto) {
+    return this.prisma.$transaction(async (tx) => {
+      const kot = await tx.kot.create({
+        data: {
+          kotNo: `KOT-${Date.now()}`,
+          orderId: dto.orderId,
+          status: 'PENDING',
+        },
+      });
+
+      return {
+        message: 'kot created successfully',
+        data: kot,
+        kot,
+      };
+    });
+  }
+
+  async update(id: string, dto: UpdateKotDto) {
+    return this.prisma.$transaction(async (tx) => {
+      await this.ensureKotExists(tx, id);
+
+      const kot = await tx.kot.update({
+        where: { id },
+
+        data: {
+          status: dto.status,
+        },
+
+        select: this.kotSelect,
+      });
+
+      // update related order status
+      await tx.orders.update({
+        where: {
+          id: kot.orderId,
+        },
+
+        data: {
+          status: dto.status,
+        },
+      });
+
+      return {
+        message: 'kot updated successfully',
+        data: kot,
+      };
+    });
+  }
+
+  async delete(id: string) {
+    await this.ensureKotExists(this.prisma, id);
+
+    const kot = await this.prisma.kot.delete({
+      where: { id },
+      select: this.kotSelect,
+    });
+    return {
+      message: 'kot deleted successfully',
+      data: kot,
+    };
+  }
+}
