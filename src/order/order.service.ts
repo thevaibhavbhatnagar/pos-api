@@ -78,7 +78,7 @@ export class OrderService {
   }
 
   async getOrderLookup() {
-    const products = await this.prisma.order.findMany({
+    const products = await this.prisma.orders.findMany({
       select: this.orderSelect,
       orderBy: { createdAt: 'desc' },
     });
@@ -97,13 +97,13 @@ export class OrderService {
     const skip = (page - 1) * limit;
 
     const [products, total] = await this.prisma.$transaction([
-      this.prisma.order.findMany({
+      this.prisma.orders.findMany({
         select: this.orderSelect,
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip,
       }),
-      this.prisma.order.count(),
+      this.prisma.orders.count(),
     ]);
 
     return {
@@ -119,7 +119,7 @@ export class OrderService {
   }
 
   async findOne(id: string) {
-    const product = await this.prisma.order.findUnique({
+    const product = await this.prisma.orders.findUnique({
       where: { id },
       select: this.orderSelect,
     });
@@ -144,7 +144,7 @@ export class OrderService {
 
     return this.prisma.$transaction(async (tx) => {
       // Get last order for bill no
-      const lastOrder = await tx.order.findFirst({
+      const lastOrder = await tx.orders.findFirst({
         orderBy: {
           createdAt: 'desc',
         },
@@ -185,7 +185,7 @@ export class OrderService {
       const totalAmount  = subTotal - discountAmount + taxAmount;
 
       //  Create order
-      const order = await this.prisma.order.create({
+      const order = await this.prisma.orders.create({
         data: {
           billNo: nextBillNo,
 
@@ -222,7 +222,7 @@ export class OrderService {
   }
 
   async deleteOrder(id: string) {
-    const product = await this.prisma.order.delete({
+    const product = await this.prisma.orders.delete({
       where: { id },
       select: this.orderSelect,
     });
