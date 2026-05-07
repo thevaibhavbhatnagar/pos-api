@@ -123,6 +123,23 @@ export type BoolWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
+export type EnumKotStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.KotStatus | Prisma.EnumKotStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.KotStatus[] | Prisma.ListEnumKotStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KotStatus[] | Prisma.ListEnumKotStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKotStatusFilter<$PrismaModel> | $Enums.KotStatus
+}
+
+export type EnumKotStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.KotStatus | Prisma.EnumKotStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.KotStatus[] | Prisma.ListEnumKotStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KotStatus[] | Prisma.ListEnumKotStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKotStatusWithAggregatesFilter<$PrismaModel> | $Enums.KotStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumKotStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumKotStatusFilter<$PrismaModel>
+}
+
 export type IntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -400,6 +417,23 @@ export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedBoolFilter<$PrismaModel>
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
+}
+
+export type NestedEnumKotStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.KotStatus | Prisma.EnumKotStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.KotStatus[] | Prisma.ListEnumKotStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KotStatus[] | Prisma.ListEnumKotStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKotStatusFilter<$PrismaModel> | $Enums.KotStatus
+}
+
+export type NestedEnumKotStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.KotStatus | Prisma.EnumKotStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.KotStatus[] | Prisma.ListEnumKotStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KotStatus[] | Prisma.ListEnumKotStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKotStatusWithAggregatesFilter<$PrismaModel> | $Enums.KotStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumKotStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumKotStatusFilter<$PrismaModel>
 }
 
 export type NestedDateTimeNullableFilter<$PrismaModel = never> = {

@@ -46,6 +46,7 @@ model Orders {
   user   User   @relation(fields: [userId], references: [id])
 
   items OrderItem[]
+  kots Kot[]
 
   @@index([branchId])
   @@index([createdAt])

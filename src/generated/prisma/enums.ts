@@ -9,6 +9,16 @@
 * 🟢 You can import this file directly.
 */
 
+export const KotStatus = {
+  PENDING: 'PENDING',
+  PREPARING: 'PREPARING',
+  READY: 'READY',
+  SERVED: 'SERVED'
+} as const
+
+export type KotStatus = (typeof KotStatus)[keyof typeof KotStatus]
+
+
 export const PaymentStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',

@@ -1,0 +1,22 @@
+enum KotStatus {
+  PENDING
+  PREPARING
+  READY
+  SERVED
+}
+
+model Kot {
+  id String @id @default(uuid())
+
+  kotNo String @unique
+
+  orderId String
+
+  status KotStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+
+  order Orders @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}

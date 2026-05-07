@@ -10,6 +10,7 @@
  */
 export type * from './models/Branch.js'
 export type * from './models/Category.js'
+export type * from './models/Kot.js'
 export type * from './models/Module.js'
 export type * from './models/Orders.js'
 export type * from './models/OrderItem.js'

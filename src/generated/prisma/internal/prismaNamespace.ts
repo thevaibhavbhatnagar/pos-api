@@ -386,6 +386,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   Branch: 'Branch',
   Category: 'Category',
+  Kot: 'Kot',
   Module: 'Module',
   Orders: 'Orders',
   OrderItem: 'OrderItem',
@@ -409,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "branch" | "category" | "module" | "orders" | "orderItem" | "product" | "role" | "permission" | "rolePermission" | "user"
+    modelProps: "branch" | "category" | "kot" | "module" | "orders" | "orderItem" | "product" | "role" | "permission" | "rolePermission" | "user"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -558,6 +559,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CategoryCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CategoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    Kot: {
+      payload: Prisma.$KotPayload<ExtArgs>
+      fields: Prisma.KotFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KotFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KotFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload>
+        }
+        findFirst: {
+          args: Prisma.KotFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KotFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload>
+        }
+        findMany: {
+          args: Prisma.KotFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload>[]
+        }
+        create: {
+          args: Prisma.KotCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload>
+        }
+        createMany: {
+          args: Prisma.KotCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KotCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload>[]
+        }
+        delete: {
+          args: Prisma.KotDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload>
+        }
+        update: {
+          args: Prisma.KotUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload>
+        }
+        deleteMany: {
+          args: Prisma.KotDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KotUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KotUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload>[]
+        }
+        upsert: {
+          args: Prisma.KotUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KotPayload>
+        }
+        aggregate: {
+          args: Prisma.KotAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKot>
+        }
+        groupBy: {
+          args: Prisma.KotGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KotGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KotCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KotCountAggregateOutputType> | number
         }
       }
     }
@@ -1215,6 +1290,17 @@ export const CategoryScalarFieldEnum = {
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
 
 
+export const KotScalarFieldEnum = {
+  id: 'id',
+  kotNo: 'kotNo',
+  orderId: 'orderId',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type KotScalarFieldEnum = (typeof KotScalarFieldEnum)[keyof typeof KotScalarFieldEnum]
+
+
 export const ModuleScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1385,6 +1471,20 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'KotStatus'
+ */
+export type EnumKotStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KotStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'KotStatus[]'
+ */
+export type ListEnumKotStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KotStatus[]'>
     
 
 
@@ -1569,6 +1669,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   branch?: Prisma.BranchOmit
   category?: Prisma.CategoryOmit
+  kot?: Prisma.KotOmit
   module?: Prisma.ModuleOmit
   orders?: Prisma.OrdersOmit
   orderItem?: Prisma.OrderItemOmit

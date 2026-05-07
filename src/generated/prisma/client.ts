@@ -50,6 +50,11 @@ export type Branch = Prisma.BranchModel
  */
 export type Category = Prisma.CategoryModel
 /**
+ * Model Kot
+ * 
+ */
+export type Kot = Prisma.KotModel
+/**
  * Model Module
  * 
  */

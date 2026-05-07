@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Branch: 'Branch',
   Category: 'Category',
+  Kot: 'Kot',
   Module: 'Module',
   Orders: 'Orders',
   OrderItem: 'OrderItem',
@@ -100,6 +101,17 @@ export const CategoryScalarFieldEnum = {
 } as const
 
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
+
+export const KotScalarFieldEnum = {
+  id: 'id',
+  kotNo: 'kotNo',
+  orderId: 'orderId',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type KotScalarFieldEnum = (typeof KotScalarFieldEnum)[keyof typeof KotScalarFieldEnum]
 
 
 export const ModuleScalarFieldEnum = {
