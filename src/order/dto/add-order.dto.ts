@@ -1,4 +1,13 @@
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, ValidateNested, } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
 
 enum PaymentMethod {
   CASH = 'CASH',
@@ -30,8 +39,14 @@ export class AddOrderDto {
   @IsNumber()
   taxAmount?: number;
 
+  @IsOptional()
+  @IsString()
+  notes?: string;
+
+  // Optional because payment happens later
+  @IsOptional()
   @IsEnum(PaymentMethod)
-  paymentMethod: PaymentMethod;
+  paymentMethod?: PaymentMethod;
 }
 
 class AddOrderItemsDto {
@@ -47,4 +62,3 @@ class AddOrderItemsDto {
   @IsNotEmpty()
   price: number;
 }
-

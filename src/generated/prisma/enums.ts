@@ -9,6 +9,16 @@
 * 🟢 You can import this file directly.
 */
 
+export const PaymentStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  PARTIAL: 'PARTIAL',
+  REFUNDED: 'REFUNDED'
+} as const
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
 export const PaymentMethod = {
   CASH: 'CASH',
   CARD: 'CARD',
@@ -20,9 +30,11 @@ export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
 
 export const OrderStatus = {
   PENDING: 'PENDING',
+  PREPARING: 'PREPARING',
+  READY: 'READY',
+  SERVED: 'SERVED',
   COMPLETED: 'COMPLETED',
-  CANCELLED: 'CANCELLED',
-  REFUNDED: 'REFUNDED'
+  CANCELLED: 'CANCELLED'
 } as const
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]

@@ -1,3 +1,10 @@
+enum PaymentStatus {
+  PENDING
+  PAID
+  PARTIAL
+  REFUNDED
+}
+
 enum PaymentMethod {
   CASH
   CARD
@@ -6,9 +13,11 @@ enum PaymentMethod {
 
 enum OrderStatus {
   PENDING
+  PREPARING
+  READY
+  SERVED
   COMPLETED
   CANCELLED
-  REFUNDED
 }
 
 model Orders {
@@ -21,8 +30,9 @@ model Orders {
   discountAmount Float? @default(0)
   taxAmount      Float? @default(0)
 
-  paymentMethod PaymentMethod
-  status        OrderStatus   @default(COMPLETED)
+  paymentMethod PaymentMethod?
+  paymentStatus PaymentStatus @default(PENDING)
+  status        OrderStatus   @default(PENDING)
 
   notes String?
 

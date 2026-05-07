@@ -126,6 +126,7 @@ export const OrdersScalarFieldEnum = {
   discountAmount: 'discountAmount',
   taxAmount: 'taxAmount',
   paymentMethod: 'paymentMethod',
+  paymentStatus: 'paymentStatus',
   status: 'status',
   notes: 'notes',
   branchId: 'branchId',

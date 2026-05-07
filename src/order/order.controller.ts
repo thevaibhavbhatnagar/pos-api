@@ -11,15 +11,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { AuthGuard } from '@nestjs/passport'; 
-import { AddOrderDto } from './dto/add-product.dto';
-import { UpdateOrderDto } from './dto/update-product.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { AddOrderDto } from './dto/add-order.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 // import { RolesGuard } from 'src/auth/roles.guard';
 // import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('api/v1/orders')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) { }
+  constructor(private readonly orderService: OrderService) {}
 
   @Get('lookup')
   getOrderLookup() {
@@ -43,8 +43,8 @@ export class OrderController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   // @Roles('ADMIN')
-  async addProduct(@Body() dto: AddOrderDto) {
-    return this.orderService.addProduct(dto);
+  async addOrder(@Body() dto: AddOrderDto) {
+    return this.orderService.addOrder(dto);
   }
 
   @UseGuards(AuthGuard('jwt'))

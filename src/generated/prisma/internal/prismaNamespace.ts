@@ -1239,6 +1239,7 @@ export const OrdersScalarFieldEnum = {
   discountAmount: 'discountAmount',
   taxAmount: 'taxAmount',
   paymentMethod: 'paymentMethod',
+  paymentStatus: 'paymentStatus',
   status: 'status',
   notes: 'notes',
   branchId: 'branchId',
@@ -1426,6 +1427,20 @@ export type EnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'PaymentMethod[]'
  */
 export type ListEnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMethod[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentStatus'
+ */
+export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentStatus[]'
+ */
+export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
     
 
 

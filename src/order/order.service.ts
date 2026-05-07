@@ -6,8 +6,8 @@ import {
 import { PrismaService } from 'src/prisma.service';
 import { ensureExists } from '../common/prisma/ensure-exists';
 import { Prisma } from 'src/generated/prisma/client';
-import { AddOrderDto } from './dto/add-product.dto';
-import { UpdateOrderDto } from './dto/update-product.dto';
+import { AddOrderDto } from './dto/add-order.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -134,7 +134,7 @@ export class OrderService {
     };
   }
 
-  async addProduct(dto: AddOrderDto) {
+  async addOrder(dto: AddOrderDto) {
     await this.ensureBranchExists(this.prisma, dto.branchId);
 
     const totalAmount = dto.items.reduce(
@@ -182,10 +182,10 @@ export class OrderService {
 
       const discountAmount = dto.discountAmount ?? 0;
       const taxAmount = dto.taxAmount ?? 0;
-      const totalAmount  = subTotal - discountAmount + taxAmount;
+      const totalAmount = subTotal - discountAmount + taxAmount;
 
       //  Create order
-      const order = await this.prisma.orders.create({
+      const order = await tx.orders.create({
         data: {
           billNo: nextBillNo,
 
@@ -195,9 +195,14 @@ export class OrderService {
           subTotal: subTotal,
           discountAmount: discountAmount,
           taxAmount: taxAmount,
-          totalAmount: totalAmount ,
+          totalAmount: totalAmount,
 
-          paymentMethod: dto.paymentMethod,
+          paymentStatus: 'PENDING',
+          status: 'PENDING',
+
+          notes: dto.notes,
+
+          paymentMethod: dto.paymentMethod ?? null,
 
           items: {
             create: orderItems,
@@ -214,7 +219,6 @@ export class OrderService {
   }
 
   async updateProduct(id: string, dto: UpdateOrderDto) {
-     
     return {
       message: 'Order updated successfully',
       data: [],
