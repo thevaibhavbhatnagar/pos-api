@@ -7,4 +7,5 @@ model Branch {
   updatedAt DateTime @updatedAt
   orders    Orders[]
   users     User[]
+  kots      Kot[]
 }

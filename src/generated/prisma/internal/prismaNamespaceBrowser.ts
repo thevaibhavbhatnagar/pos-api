@@ -108,6 +108,7 @@ export const KotScalarFieldEnum = {
   id: 'id',
   kotNo: 'kotNo',
   orderId: 'orderId',
+  branchId: 'branchId',
   status: 'status',
   createdAt: 'createdAt'
 } as const

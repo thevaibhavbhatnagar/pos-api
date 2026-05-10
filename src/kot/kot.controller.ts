@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { KotService } from './kot.service';
@@ -24,22 +25,22 @@ export class KotController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   // @Roles('ADMIN')
-  findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
-    return this.kotService.findAll(page, limit);
+  findAll(@Req() req, @Query('page') page?: number, @Query('limit') limit?: number) {
+    return this.kotService.findAll(req.user, page, limit);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   // @Roles('ADMIN')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.kotService.findOne(id);
+  findOne(@Param('id', new ParseUUIDPipe()) id: string, @Req() req) {
+    return this.kotService.findOne(id, req.user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
   // @Roles('ADMIN')
-  async create(@Body() dto: AddKotDto) {
-    return this.kotService.create(dto);
+  async create(@Body() dto: AddKotDto, @Req() req) {
+    return this.kotService.create(dto, req.user);
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -48,14 +49,15 @@ export class KotController {
   async updateProduct(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateKotDto,
+    @Req() req,
   ) {
-    return this.kotService.update(id, dto);
+    return this.kotService.update(id, dto, req.user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   // @Roles('ADMIN')
-  async deleteProduct(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.kotService.delete(id);
+  async deleteProduct(@Param('id', new ParseUUIDPipe()) id: string, @Req() req) {
+    return this.kotService.delete(id, req.user);
   }
 }

@@ -110,12 +110,14 @@ export class OrderService {
     };
   }
 
-  async findAll(page: number = 1, limit: number = 10) {
+  async findAll(user: any, page: number = 1, limit: number = 10) {
     // safety
     page = Math.max(1, Number(page) || 1);
     limit = Math.min(100, Math.max(1, Number(limit) || 10)); // max 100
 
     const skip = (page - 1) * limit;
+
+    console.log('user', user);
 
     const [orders, total] = await this.prisma.$transaction([
       this.prisma.orders.findMany({
@@ -123,8 +125,9 @@ export class OrderService {
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip,
+        where: { branchId: user.branchId },
       }),
-      this.prisma.orders.count(),
+      this.prisma.orders.count({ where: { branchId: user.branchId } }),
     ]);
 
     return {
@@ -139,9 +142,9 @@ export class OrderService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, user: any) {
     const order = await this.prisma.orders.findUnique({
-      where: { id },
+      where: { id, branchId: user.branchId },
       select: {
         ...this.orderSelect,
         kots: {
@@ -160,7 +163,7 @@ export class OrderService {
     };
   }
 
-  async create(dto: AddOrderDto) {
+  async create(dto: AddOrderDto, user: any) {
     await this.ensureBranchExists(this.prisma, dto.branchId);
 
     return this.prisma.$transaction(async (tx) => {
@@ -210,7 +213,7 @@ export class OrderService {
         data: {
           billNo: nextBillNo,
 
-          branchId: dto.branchId,
+          branchId: user.branchId,
           userId: dto.userId,
 
           subTotal: subTotal,
@@ -237,6 +240,7 @@ export class OrderService {
         data: {
           kotNo: `KOT-${Date.now()}`,
           orderId: order.id,
+          branchId: user.branchId,
           status: 'PENDING',
           items: {
             create: dto.items.map((item) => ({
@@ -311,11 +315,11 @@ export class OrderService {
 |
 |--------------------------------------------------------------------------
 */
-  async update(id: string, dto: UpdateOrderDto) {
+  async update(id: string, dto: UpdateOrderDto, user: any) {
     return this.prisma.$transaction(async (tx) => {
       // Check order exists
       const existingOrder = await tx.orders.findUnique({
-        where: { id },
+        where: { id, branchId: user.branchId },
 
         select: {
           id: true,
@@ -391,6 +395,7 @@ export class OrderService {
         data: {
           kotNo: `KOT-${Date.now()}`,
           orderId: id,
+          branchId: user.branchId,
           status: 'PENDING',
 
           items: {
@@ -408,9 +413,9 @@ export class OrderService {
       };
     });
   }
-  async delete(id: string) {
+  async delete(id: string, user: any) {
     const product = await this.prisma.orders.delete({
-      where: { id },
+      where: { id, branchId: user.branchId },
       select: this.orderSelect,
     });
     return {

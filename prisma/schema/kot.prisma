@@ -11,12 +11,15 @@ model Kot {
   kotNo String @unique
 
   orderId String
+  branchId  String?
 
   status KotStatus @default(PENDING)
 
   createdAt DateTime @default(now())
 
+
   order Orders @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  branch Branch? @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
   // RELATION
   items KotItem[]

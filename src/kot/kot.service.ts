@@ -109,7 +109,7 @@ export class KotService {
     );
   }
 
-  async findAll(page: number = 1, limit: number = 10) {
+  async findAll(user: any, page: number = 1, limit: number = 10) {
     // safety
     page = Math.max(1, Number(page) || 1);
     limit = Math.min(100, Math.max(1, Number(limit) || 10)); // max 100
@@ -119,11 +119,12 @@ export class KotService {
     const [kots, total] = await this.prisma.$transaction([
       this.prisma.kot.findMany({
         select: this.kotSelect,
+        where: { order: { branchId: user.branchId } },
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip,
       }),
-      this.prisma.kot.count(),
+      this.prisma.kot.count({ where: { order: { branchId: user.branchId } } }),
     ]);
 
     return {
@@ -138,9 +139,9 @@ export class KotService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, user: any) {
     const kot = await this.prisma.kot.findUnique({
-      where: { id },
+      where: { id, order: { branchId: user.branchId } },
       select: this.kotSelect,
     });
 
@@ -154,7 +155,7 @@ export class KotService {
     };
   }
 
-  async create(dto: AddKotDto) {
+  async create(dto: AddKotDto, user: any) {
     return this.prisma.$transaction(async (tx) => {
       await this.ensureOrderExists(tx, dto.orderId);
 
@@ -163,6 +164,7 @@ export class KotService {
           kotNo: `KOT-${Date.now()}`,
           orderId: dto.orderId,
           status: 'PENDING',
+          branchId: user.branchId,
 
           items: {
             create: dto.items.map((item) => ({
@@ -182,13 +184,13 @@ export class KotService {
     });
   }
 
-  async update(id: string, dto: UpdateKotDto) {
+  async update(id: string, dto: UpdateKotDto, user: any) {
     return this.prisma.$transaction(async (tx) => {
       await this.ensureKotExists(tx, id);
 
       // Update KOT
       const kot = await tx.kot.update({
-        where: { id },
+        where: { id, branchId: user.branchId },
 
         data: {
           status: dto.status,
@@ -201,6 +203,7 @@ export class KotService {
       const allKots = await tx.kot.findMany({
         where: {
           orderId: kot.orderId,
+          branchId: user.branchId,
         },
 
         select: {
@@ -238,11 +241,11 @@ export class KotService {
       };
     });
   }
-  async delete(id: string) {
+  async delete(id: string, user: any) {
     await this.ensureKotExists(this.prisma, id);
 
     const kot = await this.prisma.kot.delete({
-      where: { id },
+      where: { id, branchId: user.branchId },
       select: this.kotSelect,
     });
     return {
