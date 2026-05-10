@@ -7,7 +7,10 @@ model Product {
   categoryId    String
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  // RELATION
   orderItems    OrderItem[]
+  kotItems      KotItem[]
   category      Category    @relation(fields: [categoryId], references: [id])
 
   @@index([categoryId])

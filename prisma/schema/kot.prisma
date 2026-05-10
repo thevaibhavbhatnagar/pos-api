@@ -18,5 +18,27 @@ model Kot {
 
   order Orders @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
+  // RELATION
+  items KotItem[]
+
   @@index([orderId])
+}
+
+model KotItem {
+  id String @id @default(uuid())
+
+  kotId String
+  productId String
+
+  quantity Int
+  note String?
+
+  createdAt DateTime @default(now())
+
+  kot Kot @relation(fields: [kotId], references: [id], onDelete: Cascade)
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([kotId])
+  @@index([productId])
 }

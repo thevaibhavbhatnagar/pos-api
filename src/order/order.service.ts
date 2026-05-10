@@ -120,18 +120,28 @@ export class OrderService {
   }
 
   async findOne(id: string) {
-    const product = await this.prisma.orders.findUnique({
+    const order = await this.prisma.orders.findUnique({
       where: { id },
-      select: this.orderSelect,
+      select: {
+        ...this.orderSelect,
+        kots: {
+          select: {
+            id: true,
+            kotNo: true,
+            status: true,
+             
+          },
+        },
+      },
     });
 
-    if (!product) {
+    if (!order) {
       throw new NotFoundException('Product not found');
     }
 
     return {
       message: 'Orders fetched successfully',
-      data: product,
+      data: order,
     };
   }
 

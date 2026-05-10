@@ -55,6 +55,11 @@ export type Category = Prisma.CategoryModel
  */
 export type Kot = Prisma.KotModel
 /**
+ * Model KotItem
+ * 
+ */
+export type KotItem = Prisma.KotItemModel
+/**
  * Model Module
  * 
  */

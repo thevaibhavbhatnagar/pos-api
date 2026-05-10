@@ -12,4 +12,4 @@ model User {
   role      Role     @relation(fields: [roleId], references: [id])
 
   @@index([branchId])
-}
+}   

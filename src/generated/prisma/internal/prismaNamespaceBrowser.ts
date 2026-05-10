@@ -54,6 +54,7 @@ export const ModelName = {
   Branch: 'Branch',
   Category: 'Category',
   Kot: 'Kot',
+  KotItem: 'KotItem',
   Module: 'Module',
   Orders: 'Orders',
   OrderItem: 'OrderItem',
@@ -112,6 +113,18 @@ export const KotScalarFieldEnum = {
 } as const
 
 export type KotScalarFieldEnum = (typeof KotScalarFieldEnum)[keyof typeof KotScalarFieldEnum]
+
+
+export const KotItemScalarFieldEnum = {
+  id: 'id',
+  kotId: 'kotId',
+  productId: 'productId',
+  quantity: 'quantity',
+  note: 'note',
+  createdAt: 'createdAt'
+} as const
+
+export type KotItemScalarFieldEnum = (typeof KotItemScalarFieldEnum)[keyof typeof KotItemScalarFieldEnum]
 
 
 export const ModuleScalarFieldEnum = {

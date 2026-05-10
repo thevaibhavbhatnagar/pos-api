@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { ensureExists } from '../common/prisma/ensure-exists';
-import { Prisma } from 'src/generated/prisma/client';
+import { OrderStatus, Prisma } from 'src/generated/prisma/client';
 import { AddKotDto } from './dto/add-kot.dto';
 import { UpdateKotDto } from './dto/update-kot.dto';
 
@@ -145,6 +145,7 @@ export class KotService {
     return this.prisma.$transaction(async (tx) => {
       await this.ensureKotExists(tx, id);
 
+      // Update KOT
       const kot = await tx.kot.update({
         where: { id },
 
@@ -155,24 +156,33 @@ export class KotService {
         select: this.kotSelect,
       });
 
-      // update related order status
+      // KOT Status -> Order Status Mapping
+      const orderStatusMap: Record<string, OrderStatus> = {
+        PENDING: 'PENDING',
+        PREPARING: 'PREPARING',
+        READY: 'READY',
+        SERVED: 'COMPLETED',
+      };
+
+      const orderStatus = orderStatusMap[dto.status];
+
+      // Update Order Status
       await tx.orders.update({
         where: {
           id: kot.orderId,
         },
 
         data: {
-          status: dto.status,
+          status: orderStatus,
         },
       });
 
       return {
-        message: 'kot updated successfully',
+        message: 'KOT updated successfully',
         data: kot,
       };
     });
   }
-
   async delete(id: string) {
     await this.ensureKotExists(this.prisma, id);
 
