@@ -258,29 +258,69 @@ export class OrderService {
     });
   }
 
-  /* Update Flow 
-  
-  1. Find existing order
-2. Validate products
-3. Recalculate totals
-4. Replace order items
-5. Update order
-6. Detect newly added items
-7. Create NEW KOT for new items only
-  */
+  /*
+|--------------------------------------------------------------------------
+| Update Order Flow (Append-Only POS Architecture)
+|--------------------------------------------------------------------------
+|
+| This flow is designed for restaurant POS systems where:
+| - Existing KOTs should never be modified
+| - Kitchen history must remain intact
+| - New items generate new KOTs
+|
+| Flow:
+|
+| 1. Find existing order
+|    - Validate order exists
+|
+| 2. Validate incoming products
+|    - Ensure all products exist in DB
+|    - Use DB price for security
+|
+| 3. Prepare new order items
+|    - Calculate item totals
+|    - Calculate newly added subtotal
+|
+| 4. Append new order items
+|    - Do NOT delete previous order items
+|    - Preserve existing order history
+|
+| 5. Recalculate order totals
+|    - Existing subtotal + new subtotal
+|    - Apply tax and discount
+|
+| 6. Update order details
+|    - Update totals
+|    - Update payment method
+|
+| 7. Create NEW KOT
+|    - Generate separate KOT for newly added items
+|    - Preserve previous KOT history
+|
+| Result:
+|
+| Order
+|   ├── Existing Items
+|   ├── Newly Added Items
+|
+| KOT-001
+|   ├── Existing Kitchen Items
+|
+| KOT-002
+|   ├── Newly Added Kitchen Items
+|
+|--------------------------------------------------------------------------
+*/
   async update(id: string, dto: UpdateOrderDto) {
     return this.prisma.$transaction(async (tx) => {
       // Check order exists
       const existingOrder = await tx.orders.findUnique({
         where: { id },
 
-        include: {
-          items: true,
-          kots: {
-            include: {
-              items: true,
-            },
-          },
+        select: {
+          id: true,
+          subTotal: true,
+          totalAmount: true,
         },
       });
 
@@ -288,10 +328,10 @@ export class OrderService {
         throw new NotFoundException('Order not found');
       }
 
-      let subTotal = 0;
+      let newSubTotal = 0;
 
-      // Prepare updated order items
-      const updatedItems = await Promise.all(
+      // Prepare new order items
+      const newOrderItems = await Promise.all(
         dto.items.map(async (item) => {
           const product = await tx.product.findUnique({
             where: {
@@ -305,9 +345,10 @@ export class OrderService {
 
           const total = product.price * item.quantity;
 
-          subTotal += total;
+          newSubTotal += total;
 
           return {
+            orderId: id,
             productId: item.productId,
             quantity: item.quantity,
             price: product.price,
@@ -316,46 +357,24 @@ export class OrderService {
         }),
       );
 
+      // Append new order items
+      await tx.orderItem.createMany({
+        data: newOrderItems,
+      });
+
       const discountAmount = dto.discountAmount ?? 0;
       const taxAmount = dto.taxAmount ?? 0;
 
+      // Update totals
+      const subTotal = (existingOrder.subTotal ?? 0) + newSubTotal;
+
       const totalAmount = subTotal - discountAmount + taxAmount;
-
-      // Find newly added items
-      const existingProductIds = new Set(
-        existingOrder.items.map((item) => item.productId),
-      );
-
-      const newItems = updatedItems.filter(
-        (item) => !existingProductIds.has(item.productId),
-      );
-
-      // Delete old order items
-      await tx.orderItem.deleteMany({
-        where: {
-          orderId: id,
-        },
-      });
-
-      // Recreate updated order items
-      await tx.orderItem.createMany({
-        data: updatedItems.map((item) => ({
-          orderId: id,
-          productId: item.productId,
-          quantity: item.quantity,
-          price: item.price,
-          total: item.total,
-        })),
-      });
 
       // Update order
       const order = await tx.orders.update({
         where: { id },
 
         data: {
-          branchId: dto.branchId,
-          userId: dto.userId,
-
           subTotal,
           discountAmount,
           taxAmount,
@@ -367,23 +386,21 @@ export class OrderService {
         select: this.orderSelect,
       });
 
-      // Create NEW KOT only for newly added items
-      if (newItems.length > 0) {
-        await tx.kot.create({
-          data: {
-            kotNo: `KOT-${Date.now()}`,
-            orderId: id,
-            status: 'PENDING',
+      // Create NEW KOT
+      await tx.kot.create({
+        data: {
+          kotNo: `KOT-${Date.now()}`,
+          orderId: id,
+          status: 'PENDING',
 
-            items: {
-              create: newItems.map((item) => ({
-                productId: item.productId,
-                quantity: item.quantity,
-              })),
-            },
+          items: {
+            create: dto.items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+            })),
           },
-        });
-      }
+        },
+      });
 
       return {
         message: 'Order updated successfully',
