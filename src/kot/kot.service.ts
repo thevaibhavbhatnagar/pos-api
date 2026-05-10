@@ -15,7 +15,10 @@ export class KotService {
 
     kotNo: true,
 
+    status: true,
+
     orderId: true,
+
     order: {
       select: {
         id: true,
@@ -40,6 +43,7 @@ export class KotService {
           },
         },
 
+        // FULL ORDER ITEMS
         items: {
           select: {
             id: true,
@@ -63,7 +67,24 @@ export class KotService {
       },
     },
 
-    status: true,
+    // THIS KOT ITEMS ONLY
+    items: {
+      select: {
+        id: true,
+        quantity: true,
+        note: true,
+
+        productId: true,
+
+        product: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+          },
+        },
+      },
+    },
 
     createdAt: true,
   } as const;
@@ -78,6 +99,16 @@ export class KotService {
     );
   }
 
+  private ensureOrderExists(tx: Prisma.TransactionClient, id: string) {
+    return ensureExists(
+      tx.orders.findFirst({
+        where: { id },
+        select: { id: true },
+      }),
+      'order not found',
+    );
+  }
+
   async findAll(page: number = 1, limit: number = 10) {
     // safety
     page = Math.max(1, Number(page) || 1);
@@ -85,7 +116,7 @@ export class KotService {
 
     const skip = (page - 1) * limit;
 
-    const [products, total] = await this.prisma.$transaction([
+    const [kots, total] = await this.prisma.$transaction([
       this.prisma.kot.findMany({
         select: this.kotSelect,
         orderBy: { createdAt: 'desc' },
@@ -97,7 +128,7 @@ export class KotService {
 
     return {
       message: 'kots fetched successfully',
-      data: products,
+      data: kots,
       meta: {
         total,
         page,
@@ -125,18 +156,28 @@ export class KotService {
 
   async create(dto: AddKotDto) {
     return this.prisma.$transaction(async (tx) => {
+      await this.ensureOrderExists(tx, dto.orderId);
+
       const kot = await tx.kot.create({
         data: {
           kotNo: `KOT-${Date.now()}`,
           orderId: dto.orderId,
           status: 'PENDING',
+
+          items: {
+            create: dto.items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+            })),
+          },
         },
+
+        select: this.kotSelect,
       });
 
       return {
         message: 'kot created successfully',
         data: kot,
-        kot,
       };
     });
   }
@@ -156,15 +197,29 @@ export class KotService {
         select: this.kotSelect,
       });
 
-      // KOT Status -> Order Status Mapping
-      const orderStatusMap: Record<string, OrderStatus> = {
-        PENDING: 'PENDING',
-        PREPARING: 'PREPARING',
-        READY: 'READY',
-        SERVED: 'COMPLETED',
-      };
+      // Get all KOTs of this order
+      const allKots = await tx.kot.findMany({
+        where: {
+          orderId: kot.orderId,
+        },
 
-      const orderStatus = orderStatusMap[dto.status];
+        select: {
+          status: true,
+        },
+      });
+
+      // Calculate overall order status
+      let orderStatus: OrderStatus = 'PENDING';
+
+      if (allKots.some((k) => k.status === 'PENDING')) {
+        orderStatus = 'PENDING';
+      } else if (allKots.some((k) => k.status === 'PREPARING')) {
+        orderStatus = 'PREPARING';
+      } else if (allKots.some((k) => k.status === 'READY')) {
+        orderStatus = 'READY';
+      } else if (allKots.every((k) => k.status === 'SERVED')) {
+        orderStatus = 'COMPLETED';
+      }
 
       // Update Order Status
       await tx.orders.update({

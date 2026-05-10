@@ -43,24 +43,24 @@ export class OrderController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   // @Roles('ADMIN')
-  async addOrder(@Body() dto: AddOrderDto) {
-    return this.orderService.addOrder(dto);
+  async create(@Body() dto: AddOrderDto) {
+    return this.orderService.create(dto);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   // @Roles('ADMIN')
-  async updateProduct(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateOrderDto,
   ) {
-    return this.orderService.updateProduct(id, dto);
+    return this.orderService.update(id, dto);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   // @Roles('ADMIN')
-  async deleteProduct(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.orderService.deleteOrder(id);
+  async delete(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.orderService.delete(id);
   }
 }

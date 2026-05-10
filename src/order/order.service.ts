@@ -25,7 +25,7 @@ export class OrderService {
 
     paymentMethod: true,
     status: true,
-    paymentStatus:true,
+    paymentStatus: true,
 
     notes: true,
 
@@ -68,6 +68,26 @@ export class OrderService {
     updatedAt: true,
   } as const;
 
+  private kotSelectItem = {
+    id: true,
+    kotNo: true,
+    status: true,
+
+    items: {
+      select: {
+        id: true,
+        quantity: true,
+
+        product: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    },
+  } as const;
+
   private ensureBranchExists(tx: Prisma.TransactionClient, id: string) {
     return ensureExists(
       tx.branch.findFirst({
@@ -97,7 +117,7 @@ export class OrderService {
 
     const skip = (page - 1) * limit;
 
-    const [products, total] = await this.prisma.$transaction([
+    const [orders, total] = await this.prisma.$transaction([
       this.prisma.orders.findMany({
         select: this.orderSelect,
         orderBy: { createdAt: 'desc' },
@@ -109,7 +129,7 @@ export class OrderService {
 
     return {
       message: 'Orders fetched successfully',
-      data: products,
+      data: orders,
       meta: {
         total,
         page,
@@ -129,7 +149,20 @@ export class OrderService {
             id: true,
             kotNo: true,
             status: true,
-             
+            items: {
+              select: {
+                id: true,
+                quantity: true,
+                note: true,
+
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -145,13 +178,9 @@ export class OrderService {
     };
   }
 
-  async addOrder(dto: AddOrderDto) {
+  async create(dto: AddOrderDto) {
     await this.ensureBranchExists(this.prisma, dto.branchId);
 
-    const totalAmount = dto.items.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0,
-    );
 
     return this.prisma.$transaction(async (tx) => {
       // Get last order for bill no
@@ -185,7 +214,7 @@ export class OrderService {
           return {
             productId: item.productId,
             quantity: item.quantity,
-            price: item.price,
+            price: product.price,
             total,
           };
         }),
@@ -228,7 +257,14 @@ export class OrderService {
           kotNo: `KOT-${Date.now()}`,
           orderId: order.id,
           status: 'PENDING',
+          items: {
+            create: dto.items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+            })),
+          },
         },
+        select: this.kotSelectItem,
       });
 
       return {
@@ -239,14 +275,14 @@ export class OrderService {
     });
   }
 
-  async updateProduct(id: string, dto: UpdateOrderDto) {
+  async update(id: string, dto: UpdateOrderDto) {
     return {
       message: 'Order updated successfully',
       data: [],
     };
   }
 
-  async deleteOrder(id: string) {
+  async delete(id: string) {
     const product = await this.prisma.orders.delete({
       where: { id },
       select: this.orderSelect,
