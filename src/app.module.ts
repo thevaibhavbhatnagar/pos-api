@@ -12,6 +12,7 @@ import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { KotModule } from './kot/kot.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { KotModule } from './kot/kot.module';
     ProductModule,
     OrderModule,
     KotModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
