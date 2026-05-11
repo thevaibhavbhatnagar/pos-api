@@ -413,6 +413,188 @@ export class OrderService {
       };
     });
   }
+
+//   async update(id: string, dto: UpdateOrderDto, user: any) {
+//   return this.prisma.$transaction(async (tx) => {
+//     // Check order exists
+//     const existingOrder = await tx.orders.findFirst({
+//       where: {
+//         id,
+//         branchId: user.branchId,
+//       },
+//       select: {
+//         id: true,
+//       },
+//     });
+
+//     if (!existingOrder) {
+//       throw new NotFoundException('Order not found');
+//     }
+
+//     // Get existing order items
+//     const existingItems = await tx.orderItem.findMany({
+//       where: {
+//         orderId: id,
+//       },
+//     });
+
+//     // Create map for quick lookup
+//     const existingItemsMap = new Map(
+//       existingItems.map((item) => [item.productId, item]),
+//     );
+
+//     // Store KOT items only for NEWLY added qty
+//     const kotItems: {
+//       productId: string;
+//       quantity: number;
+//     }[] = [];
+
+//     // Process all incoming items
+//     for (const item of dto.items) {
+//       const product = await tx.product.findUnique({
+//         where: {
+//           id: item.productId,
+//         },
+//       });
+
+//       if (!product) {
+//         throw new NotFoundException(
+//           `Product not found: ${item.productId}`,
+//         );
+//       }
+
+//       const existingItem = existingItemsMap.get(item.productId);
+
+//       // =========================================
+//       // EXISTING ITEM
+//       // =========================================
+//       if (existingItem) {
+//         const oldQty = existingItem.quantity;
+//         const newQty = item.quantity;
+
+//         // SAME QTY → skip
+//         if (oldQty === newQty) {
+//           continue;
+//         }
+
+//         // UPDATE EXISTING ITEM
+//         await tx.orderItem.update({
+//           where: {
+//             id: existingItem.id,
+//           },
+//           data: {
+//             quantity: newQty,
+//             price: product.price,
+//             total: product.price * newQty,
+//           },
+//         });
+
+//         // ONLY CREATE KOT FOR EXTRA QTY
+//         const extraQty = newQty - oldQty;
+
+//         if (extraQty > 0) {
+//           kotItems.push({
+//             productId: item.productId,
+//             quantity: extraQty,
+//           });
+//         }
+//       }
+
+//       // =========================================
+//       // NEW ITEM
+//       // =========================================
+//       else {
+//         await tx.orderItem.create({
+//           data: {
+//             orderId: id,
+//             productId: item.productId,
+//             quantity: item.quantity,
+//             price: product.price,
+//             total: product.price * item.quantity,
+//           },
+//         });
+
+//         // Entire qty goes to KOT
+//         kotItems.push({
+//           productId: item.productId,
+//           quantity: item.quantity,
+//         });
+//       }
+//     }
+
+//     // =========================================
+//     // RECALCULATE TOTALS
+//     // =========================================
+
+//     const allItems = await tx.orderItem.findMany({
+//       where: {
+//         orderId: id,
+//       },
+//       select: {
+//         total: true,
+//       },
+//     });
+
+//     const subTotal = allItems.reduce(
+//       (sum, item) => sum + Number(item.total),
+//       0,
+//     );
+
+//     const discountAmount = dto.discountAmount ?? 0;
+//     const taxAmount = dto.taxAmount ?? 0;
+
+//     const totalAmount =
+//       subTotal - discountAmount + taxAmount;
+
+//     // =========================================
+//     // UPDATE ORDER
+//     // =========================================
+
+//     const order = await tx.orders.update({
+//       where: {
+//         id,
+//       },
+//       data: {
+//         subTotal,
+//         discountAmount,
+//         taxAmount,
+//         totalAmount,
+
+//         paymentMethod:
+//           dto.paymentMethod ?? null,
+//       },
+
+//       select: this.orderSelect,
+//     });
+
+//     // =========================================
+//     // CREATE KOT ONLY IF NEW ITEMS ADDED
+//     // =========================================
+
+//     if (kotItems.length > 0) {
+//       await tx.kot.create({
+//         data: {
+//           kotNo: `KOT-${Date.now()}`,
+//           orderId: id,
+//           branchId: user.branchId,
+//           status: 'PENDING',
+
+//           items: {
+//             create: kotItems.map((item) => ({
+//               productId: item.productId,
+//               quantity: item.quantity,
+//             })),
+//           },
+//         },
+//       });
+//     }
+
+//     return {
+//       message: 'Order updated successfully',
+//       data: order,
+//     };
+//   });
+// }
   async delete(id: string, user: any) {
     const product = await this.prisma.orders.delete({
       where: { id, branchId: user.branchId },
