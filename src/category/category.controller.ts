@@ -16,6 +16,7 @@ import { AddCategoryDto } from './dto/add-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { DeleteEntity } from 'src/common/deletion-guard/delete-entity.decorator';
 
 @Controller('api/v1/categories')
 export class CategoryController {
@@ -58,9 +59,10 @@ export class CategoryController {
     return this.categoryService.updateCategory(id, dto);
   }
 
+  @Roles('ADMIN')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
-  @Roles('ADMIN')
+  @DeleteEntity('category')
   async deleteCategory(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.categoryService.deleteCategory(id);
   }
