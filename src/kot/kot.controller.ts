@@ -22,6 +22,13 @@ import { UpdateKotDto } from './dto/update-kot.dto';
 export class KotController {
   constructor(private readonly kotService: KotService) {}
 
+  
+  @Get('lookup')
+  getKotLookup() {
+    return this.kotService.getKotLookup();
+  }
+
+
   @UseGuards(AuthGuard('jwt'))
   @Get()
   // @Roles('ADMIN')

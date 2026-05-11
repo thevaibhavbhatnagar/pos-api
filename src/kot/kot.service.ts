@@ -109,6 +109,18 @@ export class KotService {
     );
   }
 
+   async getKotLookup() {
+    const kots = await this.prisma.kot.findMany({
+      select: this.kotSelect,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      message: 'Public KOTs fetched successfully',
+      data: kots,
+    };
+  }
+
   async findAll(user: any, page: number = 1, limit: number = 10) {
     // safety
     page = Math.max(1, Number(page) || 1);
