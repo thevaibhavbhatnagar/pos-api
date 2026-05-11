@@ -596,13 +596,13 @@ export class OrderService {
 //   });
 // }
   async delete(id: string, user: any) {
-    const product = await this.prisma.orders.delete({
-      where: { id, branchId: user.branchId },
+    const order = await this.prisma.orders.delete({
+      where: { id },
       select: this.orderSelect,
     });
     return {
       message: 'Order deleted successfully',
-      data: product,
+      data: order,
     };
   }
 }

@@ -257,7 +257,7 @@ export class KotService {
     await this.ensureKotExists(this.prisma, id);
 
     const kot = await this.prisma.kot.delete({
-      where: { id, branchId: user.branchId },
+      where: { id },
       select: this.kotSelect,
     });
     return {
