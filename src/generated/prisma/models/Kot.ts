@@ -157,7 +157,7 @@ export type KotGroupByOutputType = {
   id: string
   kotNo: string
   orderId: string
-  branchId: string
+  branchId: string | null
   status: $Enums.KotStatus
   createdAt: Date
   _count: KotCountAggregateOutputType | null
@@ -187,11 +187,11 @@ export type KotWhereInput = {
   id?: Prisma.StringFilter<"Kot"> | string
   kotNo?: Prisma.StringFilter<"Kot"> | string
   orderId?: Prisma.StringFilter<"Kot"> | string
-  branchId?: Prisma.StringFilter<"Kot"> | string
+  branchId?: Prisma.StringNullableFilter<"Kot"> | string | null
   status?: Prisma.EnumKotStatusFilter<"Kot"> | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFilter<"Kot"> | Date | string
   order?: Prisma.XOR<Prisma.OrdersScalarRelationFilter, Prisma.OrdersWhereInput>
-  branch?: Prisma.XOR<Prisma.BranchScalarRelationFilter, Prisma.BranchWhereInput>
+  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   items?: Prisma.KotItemListRelationFilter
 }
 
@@ -199,7 +199,7 @@ export type KotOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   kotNo?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
+  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   order?: Prisma.OrdersOrderByWithRelationInput
@@ -214,11 +214,11 @@ export type KotWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.KotWhereInput[]
   NOT?: Prisma.KotWhereInput | Prisma.KotWhereInput[]
   orderId?: Prisma.StringFilter<"Kot"> | string
-  branchId?: Prisma.StringFilter<"Kot"> | string
+  branchId?: Prisma.StringNullableFilter<"Kot"> | string | null
   status?: Prisma.EnumKotStatusFilter<"Kot"> | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFilter<"Kot"> | Date | string
   order?: Prisma.XOR<Prisma.OrdersScalarRelationFilter, Prisma.OrdersWhereInput>
-  branch?: Prisma.XOR<Prisma.BranchScalarRelationFilter, Prisma.BranchWhereInput>
+  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   items?: Prisma.KotItemListRelationFilter
 }, "id" | "kotNo">
 
@@ -226,7 +226,7 @@ export type KotOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   kotNo?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
+  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.KotCountOrderByAggregateInput
@@ -241,7 +241,7 @@ export type KotScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Kot"> | string
   kotNo?: Prisma.StringWithAggregatesFilter<"Kot"> | string
   orderId?: Prisma.StringWithAggregatesFilter<"Kot"> | string
-  branchId?: Prisma.StringWithAggregatesFilter<"Kot"> | string
+  branchId?: Prisma.StringNullableWithAggregatesFilter<"Kot"> | string | null
   status?: Prisma.EnumKotStatusWithAggregatesFilter<"Kot"> | $Enums.KotStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Kot"> | Date | string
 }
@@ -252,7 +252,7 @@ export type KotCreateInput = {
   status?: $Enums.KotStatus
   createdAt?: Date | string
   order: Prisma.OrdersCreateNestedOneWithoutKotsInput
-  branch: Prisma.BranchCreateNestedOneWithoutKotsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutKotsInput
   items?: Prisma.KotItemCreateNestedManyWithoutKotInput
 }
 
@@ -260,7 +260,7 @@ export type KotUncheckedCreateInput = {
   id?: string
   kotNo: string
   orderId: string
-  branchId: string
+  branchId?: string | null
   status?: $Enums.KotStatus
   createdAt?: Date | string
   items?: Prisma.KotItemUncheckedCreateNestedManyWithoutKotInput
@@ -272,7 +272,7 @@ export type KotUpdateInput = {
   status?: Prisma.EnumKotStatusFieldUpdateOperationsInput | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrdersUpdateOneRequiredWithoutKotsNestedInput
-  branch?: Prisma.BranchUpdateOneRequiredWithoutKotsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutKotsNestedInput
   items?: Prisma.KotItemUpdateManyWithoutKotNestedInput
 }
 
@@ -280,7 +280,7 @@ export type KotUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kotNo?: Prisma.StringFieldUpdateOperationsInput | string
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumKotStatusFieldUpdateOperationsInput | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.KotItemUncheckedUpdateManyWithoutKotNestedInput
@@ -290,7 +290,7 @@ export type KotCreateManyInput = {
   id?: string
   kotNo: string
   orderId: string
-  branchId: string
+  branchId?: string | null
   status?: $Enums.KotStatus
   createdAt?: Date | string
 }
@@ -306,7 +306,7 @@ export type KotUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kotNo?: Prisma.StringFieldUpdateOperationsInput | string
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumKotStatusFieldUpdateOperationsInput | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -506,7 +506,7 @@ export type KotScalarWhereInput = {
   id?: Prisma.StringFilter<"Kot"> | string
   kotNo?: Prisma.StringFilter<"Kot"> | string
   orderId?: Prisma.StringFilter<"Kot"> | string
-  branchId?: Prisma.StringFilter<"Kot"> | string
+  branchId?: Prisma.StringNullableFilter<"Kot"> | string | null
   status?: Prisma.EnumKotStatusFilter<"Kot"> | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFilter<"Kot"> | Date | string
 }
@@ -517,14 +517,14 @@ export type KotCreateWithoutItemsInput = {
   status?: $Enums.KotStatus
   createdAt?: Date | string
   order: Prisma.OrdersCreateNestedOneWithoutKotsInput
-  branch: Prisma.BranchCreateNestedOneWithoutKotsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutKotsInput
 }
 
 export type KotUncheckedCreateWithoutItemsInput = {
   id?: string
   kotNo: string
   orderId: string
-  branchId: string
+  branchId?: string | null
   status?: $Enums.KotStatus
   createdAt?: Date | string
 }
@@ -551,14 +551,14 @@ export type KotUpdateWithoutItemsInput = {
   status?: Prisma.EnumKotStatusFieldUpdateOperationsInput | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrdersUpdateOneRequiredWithoutKotsNestedInput
-  branch?: Prisma.BranchUpdateOneRequiredWithoutKotsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutKotsNestedInput
 }
 
 export type KotUncheckedUpdateWithoutItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kotNo?: Prisma.StringFieldUpdateOperationsInput | string
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumKotStatusFieldUpdateOperationsInput | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -568,14 +568,14 @@ export type KotCreateWithoutOrderInput = {
   kotNo: string
   status?: $Enums.KotStatus
   createdAt?: Date | string
-  branch: Prisma.BranchCreateNestedOneWithoutKotsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutKotsInput
   items?: Prisma.KotItemCreateNestedManyWithoutKotInput
 }
 
 export type KotUncheckedCreateWithoutOrderInput = {
   id?: string
   kotNo: string
-  branchId: string
+  branchId?: string | null
   status?: $Enums.KotStatus
   createdAt?: Date | string
   items?: Prisma.KotItemUncheckedCreateNestedManyWithoutKotInput
@@ -644,7 +644,7 @@ export type KotUncheckedUpdateManyWithoutBranchInput = {
 export type KotCreateManyOrderInput = {
   id?: string
   kotNo: string
-  branchId: string
+  branchId?: string | null
   status?: $Enums.KotStatus
   createdAt?: Date | string
 }
@@ -654,14 +654,14 @@ export type KotUpdateWithoutOrderInput = {
   kotNo?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumKotStatusFieldUpdateOperationsInput | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  branch?: Prisma.BranchUpdateOneRequiredWithoutKotsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutKotsNestedInput
   items?: Prisma.KotItemUpdateManyWithoutKotNestedInput
 }
 
 export type KotUncheckedUpdateWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kotNo?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumKotStatusFieldUpdateOperationsInput | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.KotItemUncheckedUpdateManyWithoutKotNestedInput
@@ -670,7 +670,7 @@ export type KotUncheckedUpdateWithoutOrderInput = {
 export type KotUncheckedUpdateManyWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kotNo?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumKotStatusFieldUpdateOperationsInput | $Enums.KotStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -714,7 +714,7 @@ export type KotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   status?: boolean
   createdAt?: boolean
   order?: boolean | Prisma.OrdersDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  branch?: boolean | Prisma.Kot$branchArgs<ExtArgs>
   items?: boolean | Prisma.Kot$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.KotCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["kot"]>
@@ -727,7 +727,7 @@ export type KotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   status?: boolean
   createdAt?: boolean
   order?: boolean | Prisma.OrdersDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  branch?: boolean | Prisma.Kot$branchArgs<ExtArgs>
 }, ExtArgs["result"]["kot"]>
 
 export type KotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -738,7 +738,7 @@ export type KotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   status?: boolean
   createdAt?: boolean
   order?: boolean | Prisma.OrdersDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  branch?: boolean | Prisma.Kot$branchArgs<ExtArgs>
 }, ExtArgs["result"]["kot"]>
 
 export type KotSelectScalar = {
@@ -753,31 +753,31 @@ export type KotSelectScalar = {
 export type KotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kotNo" | "orderId" | "branchId" | "status" | "createdAt", ExtArgs["result"]["kot"]>
 export type KotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrdersDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  branch?: boolean | Prisma.Kot$branchArgs<ExtArgs>
   items?: boolean | Prisma.Kot$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.KotCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type KotIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrdersDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  branch?: boolean | Prisma.Kot$branchArgs<ExtArgs>
 }
 export type KotIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrdersDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  branch?: boolean | Prisma.Kot$branchArgs<ExtArgs>
 }
 
 export type $KotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Kot"
   objects: {
     order: Prisma.$OrdersPayload<ExtArgs>
-    branch: Prisma.$BranchPayload<ExtArgs>
+    branch: Prisma.$BranchPayload<ExtArgs> | null
     items: Prisma.$KotItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     kotNo: string
     orderId: string
-    branchId: string
+    branchId: string | null
     status: $Enums.KotStatus
     createdAt: Date
   }, ExtArgs["result"]["kot"]>
@@ -1175,7 +1175,7 @@ readonly fields: KotFieldRefs;
 export interface Prisma__KotClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   order<T extends Prisma.OrdersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrdersDefaultArgs<ExtArgs>>): Prisma.Prisma__OrdersClient<runtime.Types.Result.GetResult<Prisma.$OrdersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  branch<T extends Prisma.BranchDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BranchDefaultArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  branch<T extends Prisma.Kot$branchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Kot$branchArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.Kot$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Kot$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KotItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1610,6 +1610,25 @@ export type KotDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Limit how many Kots to delete.
    */
   limit?: number
+}
+
+/**
+ * Kot.branch
+ */
+export type Kot$branchArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Branch
+   */
+  select?: Prisma.BranchSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Branch
+   */
+  omit?: Prisma.BranchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BranchInclude<ExtArgs> | null
+  where?: Prisma.BranchWhereInput
 }
 
 /**

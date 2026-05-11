@@ -348,14 +348,14 @@ export type BranchMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type BranchScalarRelationFilter = {
-  is?: Prisma.BranchWhereInput
-  isNot?: Prisma.BranchWhereInput
-}
-
 export type BranchNullableScalarRelationFilter = {
   is?: Prisma.BranchWhereInput | null
   isNot?: Prisma.BranchWhereInput | null
+}
+
+export type BranchScalarRelationFilter = {
+  is?: Prisma.BranchWhereInput
+  isNot?: Prisma.BranchWhereInput
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -376,10 +376,12 @@ export type BranchCreateNestedOneWithoutKotsInput = {
   connect?: Prisma.BranchWhereUniqueInput
 }
 
-export type BranchUpdateOneRequiredWithoutKotsNestedInput = {
+export type BranchUpdateOneWithoutKotsNestedInput = {
   create?: Prisma.XOR<Prisma.BranchCreateWithoutKotsInput, Prisma.BranchUncheckedCreateWithoutKotsInput>
   connectOrCreate?: Prisma.BranchCreateOrConnectWithoutKotsInput
   upsert?: Prisma.BranchUpsertWithoutKotsInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
   connect?: Prisma.BranchWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutKotsInput, Prisma.BranchUpdateWithoutKotsInput>, Prisma.BranchUncheckedUpdateWithoutKotsInput>
 }

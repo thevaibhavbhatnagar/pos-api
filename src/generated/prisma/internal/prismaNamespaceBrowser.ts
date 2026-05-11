@@ -183,6 +183,8 @@ export const ProductScalarFieldEnum = {
   isKotRequired: 'isKotRequired',
   isActive: 'isActive',
   categoryId: 'categoryId',
+  image: 'image',
+  imagePublicId: 'imagePublicId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

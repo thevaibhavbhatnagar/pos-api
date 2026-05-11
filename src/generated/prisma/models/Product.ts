@@ -41,6 +41,8 @@ export type ProductMinAggregateOutputType = {
   isKotRequired: boolean | null
   isActive: boolean | null
   categoryId: string | null
+  image: string | null
+  imagePublicId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +54,8 @@ export type ProductMaxAggregateOutputType = {
   isKotRequired: boolean | null
   isActive: boolean | null
   categoryId: string | null
+  image: string | null
+  imagePublicId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,6 +67,8 @@ export type ProductCountAggregateOutputType = {
   isKotRequired: number
   isActive: number
   categoryId: number
+  image: number
+  imagePublicId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -84,6 +90,8 @@ export type ProductMinAggregateInputType = {
   isKotRequired?: true
   isActive?: true
   categoryId?: true
+  image?: true
+  imagePublicId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -95,6 +103,8 @@ export type ProductMaxAggregateInputType = {
   isKotRequired?: true
   isActive?: true
   categoryId?: true
+  image?: true
+  imagePublicId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +116,8 @@ export type ProductCountAggregateInputType = {
   isKotRequired?: true
   isActive?: true
   categoryId?: true
+  image?: true
+  imagePublicId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -204,6 +216,8 @@ export type ProductGroupByOutputType = {
   isKotRequired: boolean
   isActive: boolean
   categoryId: string
+  image: string | null
+  imagePublicId: string | null
   createdAt: Date
   updatedAt: Date
   _count: ProductCountAggregateOutputType | null
@@ -238,6 +252,8 @@ export type ProductWhereInput = {
   isKotRequired?: Prisma.BoolFilter<"Product"> | boolean
   isActive?: Prisma.BoolFilter<"Product"> | boolean
   categoryId?: Prisma.StringFilter<"Product"> | string
+  image?: Prisma.StringNullableFilter<"Product"> | string | null
+  imagePublicId?: Prisma.StringNullableFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   orderItems?: Prisma.OrderItemListRelationFilter
@@ -252,6 +268,8 @@ export type ProductOrderByWithRelationInput = {
   isKotRequired?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  image?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
@@ -269,6 +287,8 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   isKotRequired?: Prisma.BoolFilter<"Product"> | boolean
   isActive?: Prisma.BoolFilter<"Product"> | boolean
   categoryId?: Prisma.StringFilter<"Product"> | string
+  image?: Prisma.StringNullableFilter<"Product"> | string | null
+  imagePublicId?: Prisma.StringNullableFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   orderItems?: Prisma.OrderItemListRelationFilter
@@ -283,6 +303,8 @@ export type ProductOrderByWithAggregationInput = {
   isKotRequired?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  image?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProductCountOrderByAggregateInput
@@ -302,6 +324,8 @@ export type ProductScalarWhereWithAggregatesInput = {
   isKotRequired?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   isActive?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   categoryId?: Prisma.StringWithAggregatesFilter<"Product"> | string
+  image?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  imagePublicId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
 }
@@ -312,6 +336,8 @@ export type ProductCreateInput = {
   price: number
   isKotRequired?: boolean
   isActive?: boolean
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
@@ -326,6 +352,8 @@ export type ProductUncheckedCreateInput = {
   isKotRequired?: boolean
   isActive?: boolean
   categoryId: string
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
@@ -338,6 +366,8 @@ export type ProductUpdateInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
@@ -352,6 +382,8 @@ export type ProductUncheckedUpdateInput = {
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
@@ -365,6 +397,8 @@ export type ProductCreateManyInput = {
   isKotRequired?: boolean
   isActive?: boolean
   categoryId: string
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -375,6 +409,8 @@ export type ProductUpdateManyMutationInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -386,6 +422,8 @@ export type ProductUncheckedUpdateManyInput = {
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -412,6 +450,8 @@ export type ProductCountOrderByAggregateInput = {
   isKotRequired?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  image?: Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -427,6 +467,8 @@ export type ProductMaxOrderByAggregateInput = {
   isKotRequired?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  image?: Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -438,6 +480,8 @@ export type ProductMinOrderByAggregateInput = {
   isKotRequired?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  image?: Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -522,6 +566,8 @@ export type ProductCreateWithoutCategoryInput = {
   price: number
   isKotRequired?: boolean
   isActive?: boolean
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
@@ -534,6 +580,8 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   price: number
   isKotRequired?: boolean
   isActive?: boolean
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
@@ -576,6 +624,8 @@ export type ProductScalarWhereInput = {
   isKotRequired?: Prisma.BoolFilter<"Product"> | boolean
   isActive?: Prisma.BoolFilter<"Product"> | boolean
   categoryId?: Prisma.StringFilter<"Product"> | string
+  image?: Prisma.StringNullableFilter<"Product"> | string | null
+  imagePublicId?: Prisma.StringNullableFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
 }
@@ -586,6 +636,8 @@ export type ProductCreateWithoutKotItemsInput = {
   price: number
   isKotRequired?: boolean
   isActive?: boolean
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
@@ -599,6 +651,8 @@ export type ProductUncheckedCreateWithoutKotItemsInput = {
   isKotRequired?: boolean
   isActive?: boolean
   categoryId: string
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
@@ -626,6 +680,8 @@ export type ProductUpdateWithoutKotItemsInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
@@ -639,6 +695,8 @@ export type ProductUncheckedUpdateWithoutKotItemsInput = {
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
@@ -650,6 +708,8 @@ export type ProductCreateWithoutOrderItemsInput = {
   price: number
   isKotRequired?: boolean
   isActive?: boolean
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   kotItems?: Prisma.KotItemCreateNestedManyWithoutProductInput
@@ -663,6 +723,8 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   isKotRequired?: boolean
   isActive?: boolean
   categoryId: string
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   kotItems?: Prisma.KotItemUncheckedCreateNestedManyWithoutProductInput
@@ -690,6 +752,8 @@ export type ProductUpdateWithoutOrderItemsInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   kotItems?: Prisma.KotItemUpdateManyWithoutProductNestedInput
@@ -703,6 +767,8 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   kotItems?: Prisma.KotItemUncheckedUpdateManyWithoutProductNestedInput
@@ -714,6 +780,8 @@ export type ProductCreateManyCategoryInput = {
   price: number
   isKotRequired?: boolean
   isActive?: boolean
+  image?: string | null
+  imagePublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -724,6 +792,8 @@ export type ProductUpdateWithoutCategoryInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
@@ -736,6 +806,8 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
@@ -748,6 +820,8 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   isKotRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -799,6 +873,8 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   isKotRequired?: boolean
   isActive?: boolean
   categoryId?: boolean
+  image?: boolean
+  imagePublicId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
@@ -814,6 +890,8 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   isKotRequired?: boolean
   isActive?: boolean
   categoryId?: boolean
+  image?: boolean
+  imagePublicId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
@@ -826,6 +904,8 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   isKotRequired?: boolean
   isActive?: boolean
   categoryId?: boolean
+  image?: boolean
+  imagePublicId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
@@ -838,11 +918,13 @@ export type ProductSelectScalar = {
   isKotRequired?: boolean
   isActive?: boolean
   categoryId?: boolean
+  image?: boolean
+  imagePublicId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "price" | "isKotRequired" | "isActive" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "price" | "isKotRequired" | "isActive" | "categoryId" | "image" | "imagePublicId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   kotItems?: boolean | Prisma.Product$kotItemsArgs<ExtArgs>
@@ -870,6 +952,8 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     isKotRequired: boolean
     isActive: boolean
     categoryId: string
+    image: string | null
+    imagePublicId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["product"]>
@@ -1304,6 +1388,8 @@ export interface ProductFieldRefs {
   readonly isKotRequired: Prisma.FieldRef<"Product", 'Boolean'>
   readonly isActive: Prisma.FieldRef<"Product", 'Boolean'>
   readonly categoryId: Prisma.FieldRef<"Product", 'String'>
+  readonly image: Prisma.FieldRef<"Product", 'String'>
+  readonly imagePublicId: Prisma.FieldRef<"Product", 'String'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Product", 'DateTime'>
 }

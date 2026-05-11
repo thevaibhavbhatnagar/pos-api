@@ -8,7 +8,9 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -16,6 +18,7 @@ import { AddProductDto } from './dto/add-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('api/v1/products')
 export class ProductController {
@@ -28,7 +31,7 @@ export class ProductController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('category') 
+  @Get('category')
   getProductByCategory(@Query('category_id') category_id: string) {
     return this.productService.getProductByCategory(category_id);
   }
@@ -68,5 +71,17 @@ export class ProductController {
   @Roles('ADMIN')
   async deleteProduct(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.productService.deleteProduct(id);
+  }
+
+  // =========================
+  // Upload Product Image
+  // =========================
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('ADMIN')
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadProductImage(@UploadedFile() file: Express.Multer.File) {
+    return this.productService.uploadImage(file);
   }
 }

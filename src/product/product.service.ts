@@ -8,17 +8,29 @@ import { AddProductDto } from './dto/add-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ensureExists } from '../common/prisma/ensure-exists';
 import { Prisma } from 'src/generated/prisma/client';
+import { v2 as cloudinary } from 'cloudinary';
 
 @Injectable()
 export class ProductService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+
+    console.log('CLOUD NAME:', process.env.CLOUDINARY_CLOUD_NAME);
+    console.log('API KEY:', process.env.CLOUDINARY_API_KEY);
+  }
 
   // Reusable select (same style as Company/Publisher)
   private productSelect = {
     id: true,
     name: true,
     categoryId: true,
-    category: { select: {id: true, name: true } },
+    image: true,
+    imagePublicId: true,
+    category: { select: { id: true, name: true } },
     isKotRequired: true,
     price: true,
     isActive: true,
@@ -57,6 +69,8 @@ export class ProductService {
       select: {
         id: true,
         name: true,
+        image: true,
+        imagePublicId: true,
         categoryId: true,
         category: { select: { id: true, name: true } },
         isKotRequired: true,
@@ -152,5 +166,27 @@ export class ProductService {
       message: 'Product deleted successfully',
       data: product,
     };
+  }
+
+  async uploadImage(file: Express.Multer.File) {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            folder: 'products',
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            }
+
+            resolve({
+              url: result?.secure_url,
+              public_id: result?.public_id,
+            });
+          },
+        )
+        .end(file.buffer);
+    });
   }
 }
