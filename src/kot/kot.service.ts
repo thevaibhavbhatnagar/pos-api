@@ -109,7 +109,7 @@ export class KotService {
     );
   }
 
-   async getKotLookup() {
+  async getKotLookup() {
     const kots = await this.prisma.kot.findMany({
       select: this.kotSelect,
       orderBy: { createdAt: 'desc' },
@@ -131,12 +131,12 @@ export class KotService {
     const [kots, total] = await this.prisma.$transaction([
       this.prisma.kot.findMany({
         select: this.kotSelect,
-        where: { order: { branchId: user.branchId } },
+        where: { branchId: user.branchId },
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip,
       }),
-      this.prisma.kot.count({ where: { order: { branchId: user.branchId } } }),
+      this.prisma.kot.count({ where: { branchId: user.branchId } }),
     ]);
 
     return {
@@ -152,8 +152,8 @@ export class KotService {
   }
 
   async findOne(id: string, user: any) {
-    const kot = await this.prisma.kot.findUnique({
-      where: { id, order: { branchId: user.branchId } },
+    const kot = await this.prisma.kot.findFirst({
+      where: { id, branchId: user.branchId },
       select: this.kotSelect,
     });
 
@@ -198,11 +198,19 @@ export class KotService {
 
   async update(id: string, dto: UpdateKotDto, user: any) {
     return this.prisma.$transaction(async (tx) => {
-      await this.ensureKotExists(tx, id);
+      const existingKot = await tx.kot.findFirst({
+        where: {
+          id,
+          branchId: user.branchId,
+        },
+      });
 
-      // Update KOT
+      if (!existingKot) {
+        throw new NotFoundException('kot not found');
+      }
+
       const kot = await tx.kot.update({
-        where: { id, branchId: user.branchId },
+        where: { id: existingKot.id },
 
         data: {
           status: dto.status,
@@ -254,12 +262,22 @@ export class KotService {
     });
   }
   async delete(id: string, user: any) {
-    await this.ensureKotExists(this.prisma, id);
+    const existingKot = await this.prisma.kot.findFirst({
+      where: {
+        id,
+        branchId: user.branchId,
+      },
+    });
+
+    if (!existingKot) {
+      throw new NotFoundException('kot not found');
+    }
 
     const kot = await this.prisma.kot.delete({
-      where: { id },
+      where: { id: existingKot.id },
       select: this.kotSelect,
     });
+
     return {
       message: 'kot deleted successfully',
       data: kot,
