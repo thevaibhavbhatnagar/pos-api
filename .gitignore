@@ -25,3 +25,8 @@ lerna-debug.log*
 
 /generated/prisma
 package-lock.json
+
+# Docker files
+.docker-compose.yml
+.dockerfile
+.dockerignore
