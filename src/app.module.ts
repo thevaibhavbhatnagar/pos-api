@@ -13,6 +13,7 @@ import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { KotModule } from './kot/kot.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { SessionModule } from './session/session.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     OrderModule,
     KotModule,
     DashboardModule,
+    SessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
