@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -6,14 +6,22 @@ export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
   async getDashboardStats(user: any) {
-    // Admin should not access branch dashboard
+    // CENTRAL DASHBOARD
     if (!user.branchId) {
-      throw new ForbiddenException(
-        'Dashboard is only available for branch users',
-      );
+      const totalBranches = await this.prisma.branch.count();
+
+      return {
+        message: `Welcome ${user.role}`,
+        data: {
+          dashboardType: 'CENTRAL',
+          role: user.role,
+          totalBranches,
+        },
+      };
     }
 
-    const [totalOrders, pendingKots, totalBranches] =
+    // BRANCH DASHBOARD
+    const [totalOrders, pendingKots] =
       await this.prisma.$transaction([
         this.prisma.orders.count({
           where: {
@@ -29,16 +37,15 @@ export class DashboardService {
             status: 'PENDING',
           },
         }),
-
-        this.prisma.branch.count(),
       ]);
 
     return {
-      message: 'Dashboard stats fetched successfully',
+      message: `Welcome ${user.role}`,
       data: {
+        dashboardType: 'BRANCH',
+        role: user.role,
         totalOrders,
         pendingKots,
-        totalBranches,
       },
     };
   }
