@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  api_logs: 'api_logs',
   Branch: 'Branch',
   Category: 'Category',
   Kot: 'Kot',
@@ -79,6 +80,25 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const Api_logsScalarFieldEnum = {
+  id: 'id',
+  method: 'method',
+  endpoint: 'endpoint',
+  status_code: 'status_code',
+  request_body: 'request_body',
+  response_body: 'response_body',
+  query_params: 'query_params',
+  ip_address: 'ip_address',
+  user_agent: 'user_agent',
+  user_id: 'user_id',
+  execution_time: 'execution_time',
+  error_message: 'error_message',
+  created_at: 'created_at'
+} as const
+
+export type Api_logsScalarFieldEnum = (typeof Api_logsScalarFieldEnum)[keyof typeof Api_logsScalarFieldEnum]
 
 
 export const BranchScalarFieldEnum = {
@@ -246,12 +266,29 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 export const NullsOrder = {

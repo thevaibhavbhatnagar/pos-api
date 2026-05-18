@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma.module';
@@ -14,6 +14,7 @@ import { OrderModule } from './order/order.module';
 import { KotModule } from './kot/kot.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SessionModule } from './session/session.module';
+import { ApiLoggerMiddleware } from './common/middlewares/api-logger.middleware';
 
 @Module({
   imports: [
@@ -34,4 +35,8 @@ import { SessionModule } from './session/session.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ApiLoggerMiddleware).forRoutes('*');
+  }
+}

@@ -384,6 +384,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
+  api_logs: 'api_logs',
   Branch: 'Branch',
   Category: 'Category',
   Kot: 'Kot',
@@ -411,10 +412,84 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "branch" | "category" | "kot" | "kotItem" | "module" | "orders" | "orderItem" | "product" | "role" | "permission" | "rolePermission" | "user"
+    modelProps: "api_logs" | "branch" | "category" | "kot" | "kotItem" | "module" | "orders" | "orderItem" | "product" | "role" | "permission" | "rolePermission" | "user"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    api_logs: {
+      payload: Prisma.$api_logsPayload<ExtArgs>
+      fields: Prisma.api_logsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.api_logsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.api_logsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload>
+        }
+        findFirst: {
+          args: Prisma.api_logsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.api_logsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload>
+        }
+        findMany: {
+          args: Prisma.api_logsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload>[]
+        }
+        create: {
+          args: Prisma.api_logsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload>
+        }
+        createMany: {
+          args: Prisma.api_logsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.api_logsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload>[]
+        }
+        delete: {
+          args: Prisma.api_logsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload>
+        }
+        update: {
+          args: Prisma.api_logsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload>
+        }
+        deleteMany: {
+          args: Prisma.api_logsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.api_logsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.api_logsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload>[]
+        }
+        upsert: {
+          args: Prisma.api_logsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$api_logsPayload>
+        }
+        aggregate: {
+          args: Prisma.Api_logsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateApi_logs>
+        }
+        groupBy: {
+          args: Prisma.api_logsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Api_logsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.api_logsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Api_logsCountAggregateOutputType> | number
+        }
+      }
+    }
     Branch: {
       payload: Prisma.$BranchPayload<ExtArgs>
       fields: Prisma.BranchFieldRefs
@@ -1342,6 +1417,25 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const Api_logsScalarFieldEnum = {
+  id: 'id',
+  method: 'method',
+  endpoint: 'endpoint',
+  status_code: 'status_code',
+  request_body: 'request_body',
+  response_body: 'response_body',
+  query_params: 'query_params',
+  ip_address: 'ip_address',
+  user_agent: 'user_agent',
+  user_id: 'user_id',
+  execution_time: 'execution_time',
+  error_message: 'error_message',
+  created_at: 'created_at'
+} as const
+
+export type Api_logsScalarFieldEnum = (typeof Api_logsScalarFieldEnum)[keyof typeof Api_logsScalarFieldEnum]
+
+
 export const BranchScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1507,12 +1601,29 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 export const NullsOrder = {
@@ -1540,6 +1651,34 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'String[]'
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -1575,20 +1714,6 @@ export type EnumKotStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'KotStatus[]'
  */
 export type ListEnumKotStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KotStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -1757,6 +1882,7 @@ export type PrismaClientOptions = ({
   queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
+  api_logs?: Prisma.api_logsOmit
   branch?: Prisma.BranchOmit
   category?: Prisma.CategoryOmit
   kot?: Prisma.KotOmit

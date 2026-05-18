@@ -427,14 +427,6 @@ export type KotItemUncheckedUpdateManyWithoutKotNestedInput = {
   deleteMany?: Prisma.KotItemScalarWhereInput | Prisma.KotItemScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type KotItemCreateNestedManyWithoutProductInput = {
   create?: Prisma.XOR<Prisma.KotItemCreateWithoutProductInput, Prisma.KotItemUncheckedCreateWithoutProductInput> | Prisma.KotItemCreateWithoutProductInput[] | Prisma.KotItemUncheckedCreateWithoutProductInput[]
   connectOrCreate?: Prisma.KotItemCreateOrConnectWithoutProductInput | Prisma.KotItemCreateOrConnectWithoutProductInput[]

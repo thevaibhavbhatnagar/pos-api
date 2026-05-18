@@ -1,0 +1,28 @@
+model api_logs {
+  id               String    @id @default(cuid())
+
+  method           String
+  endpoint         String
+  status_code      Int
+
+  request_body     Json?
+  response_body    Json?
+
+  query_params     Json?
+
+  ip_address       String?
+  user_agent       String?
+
+  user_id          String?
+
+  execution_time   Int? // milliseconds
+
+  error_message    String?
+
+  created_at       DateTime  @default(now())
+
+  @@index([endpoint])
+  @@index([status_code])
+  @@index([user_id])
+  @@index([created_at])
+}
