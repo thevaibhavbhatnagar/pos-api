@@ -34,30 +34,45 @@ export class UserService {
 
     const [users, total] = await this.prisma.$transaction([
       this.prisma.user.findMany({
+        where: {
+          role: {
+            name: {
+              not: 'SUPER_ADMIN',
+            },
+          },
+        },
         select: {
           id: true,
           email: true,
-          name: true, 
+          name: true,
           roleId: true,
           role: {
             select: {
               name: true,
               id: true,
             },
-          }, 
+          },
           branchId: true,
           branch: {
             select: {
               name: true,
               id: true,
             },
-          }, 
+          },
         },
         orderBy: { id: 'desc' },
         take: limit,
         skip,
       }),
-      this.prisma.user.count(),
+      this.prisma.user.count({
+        where: {
+          role: {
+            name: {
+              not: 'SUPER_ADMIN',
+            },
+          },
+        },
+      }),
     ]);
 
     return {
@@ -92,11 +107,15 @@ export class UserService {
               },
             },
           },
-        }, 
+        },
       },
     });
 
     if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.role.name === 'SUPER_ADMIN') {
       throw new NotFoundException('User not found');
     }
 
@@ -107,6 +126,16 @@ export class UserService {
   }
 
   async create(dto: CreateUserDto) {
+    const role = await this.prisma.role.findUnique({
+      where: {
+        id: dto.roleId,
+      },
+    });
+
+    if (role?.name === 'SUPER_ADMIN') {
+      throw new ConflictException('SUPER_ADMIN user cannot be created');
+    }
+
     // Check if a user with the given email already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -133,7 +162,7 @@ export class UserService {
         id: true,
         email: true,
         name: true,
-        roleId: true, 
+        roleId: true,
       },
     });
     return {
@@ -143,11 +172,37 @@ export class UserService {
   }
 
   async update(id: string, dto: UpdateUserDto) {
-    // ensure user exists
-    await this.findOne(id);
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        role: true,
+      },
+    });
 
+    if (!existingUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    // SUPER_ADMIN user cannot be modified
+    if (existingUser.role?.name === 'SUPER_ADMIN') {
+      throw new ConflictException('SUPER_ADMIN user cannot be modified');
+    }
+
+    // Prevent assigning SUPER_ADMIN role
     if (dto.roleId) {
-      await this.ensureRoleExists(this.prisma, dto.roleId);
+      const role = await this.prisma.role.findUnique({
+        where: {
+          id: dto.roleId,
+        },
+      });
+
+      if (!role || role.deletedAt) {
+        throw new NotFoundException('Role not found');
+      }
+
+      if (role.name === 'SUPER_ADMIN') {
+        throw new ConflictException('SUPER_ADMIN role cannot be assigned');
+      }
     }
 
     const user = await this.prisma.user.update({
@@ -157,7 +212,7 @@ export class UserService {
         id: true,
         email: true,
         name: true,
-        roleId: true, 
+        roleId: true,
         branchId: true,
       },
     });
@@ -169,6 +224,17 @@ export class UserService {
   }
 
   async remove(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        role: true,
+      },
+    });
+
+    if (user?.role?.name === 'SUPER_ADMIN') {
+      throw new ConflictException('SUPER_ADMIN user cannot be deleted');
+    }
+
     await this.findOne(id);
     await this.prisma.user.delete({ where: { id } });
     return { message: 'User deleted successfully' };

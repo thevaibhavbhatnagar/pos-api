@@ -28,28 +28,28 @@ export class RoleController {
 
   @UseGuards(AuthGuard('jwt'),RolesGuard)
   @Post()
-  @Roles('ADMIN')
+  @Roles('SUPER_ADMIN', 'ADMIN')
   async create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.createRole(createRoleDto);
   }
 
   @UseGuards(AuthGuard('jwt'),RolesGuard)
   @Get()
-  @Roles('ADMIN')
+  @Roles('SUPER_ADMIN', 'ADMIN')
   async findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
     return this.roleService.findAll(page, limit);
   }
 
   @UseGuards(AuthGuard('jwt'),RolesGuard)
   @Get(':id')
-  @Roles('ADMIN')
+  @Roles('SUPER_ADMIN', 'ADMIN')
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.roleService.findOne(id);
   }
 
   @UseGuards(AuthGuard('jwt'),RolesGuard)
   @Patch(':id')
-  @Roles('ADMIN')
+  @Roles('SUPER_ADMIN', 'ADMIN')
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateRoleDto: UpdateRoleDto,
@@ -59,7 +59,7 @@ export class RoleController {
 
   @UseGuards(AuthGuard('jwt'),RolesGuard)
   @Delete(':id')
-  @Roles('ADMIN')
+  @Roles('SUPER_ADMIN', 'ADMIN')
   @DeleteEntity('role')
   async deleteRole(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.roleService.deleteRole(id);

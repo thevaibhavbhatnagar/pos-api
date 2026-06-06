@@ -15,6 +15,7 @@ import { KotModule } from './kot/kot.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SessionModule } from './session/session.module';
 import { ApiLoggerMiddleware } from './common/middlewares/api-logger.middleware';
+import { ReportsModule } from './reports/report.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ApiLoggerMiddleware } from './common/middlewares/api-logger.middleware'
     KotModule,
     DashboardModule,
     SessionModule,
+    ReportsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -61,9 +65,14 @@ export class RoleService {
         skip,
         where: {
           deletedAt: null,
+          name: {
+            not: 'SUPER_ADMIN',
+          },
         },
       }),
-      this.prisma.role.count({ where: { deletedAt: null } }),
+      this.prisma.role.count({
+        where: { deletedAt: null, name: { not: 'SUPER_ADMIN' } },
+      }),
     ]);
     return {
       message: 'roles fetched successfully',
@@ -76,41 +85,15 @@ export class RoleService {
       },
     };
   }
-
-  // async findOne(id: string) {
-  //   const role = await this.prisma.role.findFirst({
-  //     where: {
-  //       id: id,
-  //       deletedAt: null,
-  //     },
-  //     select: {
-  //       ...this.roleSelect,
-  //       permissions: {
-  //         select: {
-  //           permissionId: true,
-  //           permission: {
-  //             select: {
-  //               id: true,
-  //               key: true,
-  //               description: true,
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   });
-  //   if (!role) {
-  //     throw new NotFoundException('role not found');
-  //   }
-
-  //   return {
-  //     message: 'role fetched successfully',
-  //     data: role,
-  //   };
-  // }
-
-  //we find roleId get detail then roleid == rolePermissionId.rId then rolePermissionId.permissionId == permission.PermissionId then moduleId == permission.moduleId
   async findOne(id: string) {
+    const existingRole = await this.prisma.role.findUnique({
+      where: { id },
+    });
+
+    if (existingRole?.name === 'SUPER_ADMIN') {
+      throw new ForbiddenException('SUPER_ADMIN role cannot be viewed');
+    }
+
     const role = await this.prisma.role.findFirst({
       where: {
         id,
@@ -200,55 +183,11 @@ export class RoleService {
     };
   }
 
-  // async createRole(dto: CreateRoleDto) {
-  //   // 1) ensure permissions exist
-  //   const perms = await this.prisma.permission.findMany({
-  //     where: { id: { in: dto.permissionIds } },
-  //     select: { id: true, key: true },
-  //   });
-
-  //   const foundIds = new Set(perms.map((p) => p.id));
-
-  //   const missingIds = dto.permissionIds.filter((k) => !foundIds.has(k));
-
-  //   if (missingIds.length > 0) {
-  //     throw new NotFoundException(
-  //       `Permission not found: ${missingIds.join(', ')}`,
-  //     );
-  //   }
-
-  //   // 2) create role + mappings in one transaction
-  //   const role = await this.prisma.$transaction(async (tx) => {
-  //     const role = await tx.role.create({
-  //       data: {
-  //         name: dto.name,
-  //       },
-  //     });
-
-  //     // create role_permissions mapping
-  //     await tx.rolePermission.createMany({
-  //       data: perms.map((p) => ({ roleId: role.id, permissionId: p.id })),
-  //       skipDuplicates: true,
-  //     });
-
-  //     // return the created role with permissions
-  //     return tx.role.findUnique({
-  //       where: { id: role.id },
-  //       include: {
-  //         permissions: {
-  //           include: { permission: true }, // bring full permission object
-  //         },
-  //       },
-  //     });
-  //   });
-
-  //   return {
-  //     message: 'role created successfully',
-  //     data: role,
-  //   };
-  // }
-
   async createRole(dto: CreateRoleDto) {
+    if (dto.name === 'SUPER_ADMIN') {
+      throw new ForbiddenException('SUPER_ADMIN role cannot be created');
+    }
+
     // 1) ensure permissions exist
     const perms = await this.prisma.permission.findMany({
       where: { id: { in: dto.permissionIds }, module: { deletedAt: null } },
@@ -302,6 +241,14 @@ export class RoleService {
   }
 
   async updateRole(id: string, dto: UpdateRoleDto) {
+    const role = await this.prisma.role.findUnique({
+      where: { id },
+    });
+
+    if (role?.name === 'SUPER_ADMIN') {
+      throw new ForbiddenException('SUPER_ADMIN role cannot be modified');
+    }
+
     // 1) ensure role exists + not deleted
     await this.ensureRoleExists(this.prisma, id);
 
@@ -372,6 +319,14 @@ export class RoleService {
   }
 
   async deleteRole(id: string) {
+    const existingRole = await this.prisma.role.findUnique({
+      where: { id },
+    });
+
+    if (existingRole?.name === 'SUPER_ADMIN') {
+      throw new ForbiddenException('SUPER_ADMIN role cannot be deleted');
+    }
+
     const role = await this.prisma.role.update({
       where: { id },
       data: { deletedAt: new Date() },
