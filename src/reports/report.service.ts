@@ -10,29 +10,48 @@ export class ReportsService {
     startDate: Date,
     endDate: Date,
     message: string,
+    page: number,
+    limit: number,
+    skip: number,
   ) {
-    const sales = await this.prisma.orderItem.groupBy({
-      by: ['productId'],
-      where: {
-        order: {
-          branchId,
-          status: 'COMPLETED',
-          createdAt: {
-            gte: startDate,
-            lte: endDate,
+    const [sales, total] = await this.prisma.$transaction([
+      this.prisma.orderItem.groupBy({
+        by: ['productId'],
+        where: {
+          order: {
+            branchId,
+            status: 'COMPLETED',
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
           },
         },
-      },
-      _sum: {
-        quantity: true,
-        total: true,
-      },
-      orderBy: {
         _sum: {
-          quantity: 'desc',
+          quantity: true,
+          total: true,
         },
-      },
-    });
+        orderBy: {
+          _sum: {
+            quantity: 'desc',
+          },
+        },
+        take: limit,
+        skip,
+      }),
+      this.prisma.orderItem.count({
+        where: {
+          order: {
+            branchId,
+            status: 'COMPLETED',
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
+          },
+        },
+      }),
+    ]);
 
     const productIds = sales.map((item) => item.productId);
 
@@ -54,14 +73,17 @@ export class ReportsService {
     const data = sales.map((sale) => {
       const product = productMap.get(sale.productId);
 
+      const quantitySold = sale._sum?.quantity ?? 0;
+      const totalSales = sale._sum?.total ?? 0;
+
       return {
         productId: sale.productId,
         productName: product?.name,
         price: product?.price,
         image: product?.image,
         category: product?.category?.name,
-        quantitySold: sale._sum.quantity ?? 0,
-        totalSales: sale._sum.total ?? 0,
+        quantitySold: quantitySold,
+        totalSales: totalSales,
       };
     });
 
@@ -69,15 +91,32 @@ export class ReportsService {
       success: true,
       message,
       data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
     };
   }
 
-  async getProductSalesReport(branchId: string, period: string) {
+  async getProductSalesReport(
+    branchId: string,
+    period: string,
+    page: number,
+    limit: number,
+  ) {
     const now = new Date();
 
     let startDate: Date;
     let endDate: Date;
     let message: string;
+
+    // safety
+    page = Math.max(1, Number(page) || 1);
+    limit = Math.min(100, Math.max(1, Number(limit) || 10)); // max 100
+
+    const skip = (page - 1) * limit;
 
     switch (period) {
       case 'daily':
@@ -135,6 +174,9 @@ export class ReportsService {
       startDate,
       endDate,
       message,
+      page,
+      limit,
+      skip,
     );
   }
 }
