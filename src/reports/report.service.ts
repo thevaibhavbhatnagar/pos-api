@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { ensureExists } from 'src/common/prisma/ensure-exists';
 
 @Injectable()
 export class ReportsService {
@@ -14,7 +15,7 @@ export class ReportsService {
     limit: number,
     skip: number,
   ) {
-    const [sales, total] = await this.prisma.$transaction([
+    const [sales, totalGroups] = await this.prisma.$transaction([
       this.prisma.orderItem.groupBy({
         by: ['productId'],
         where: {
@@ -39,7 +40,8 @@ export class ReportsService {
         take: limit,
         skip,
       }),
-      this.prisma.orderItem.count({
+      this.prisma.orderItem.groupBy({
+        by: ['productId'],
         where: {
           order: {
             branchId,
@@ -50,9 +52,13 @@ export class ReportsService {
             },
           },
         },
+        orderBy: {
+          productId: 'asc',
+        },
       }),
     ]);
 
+    const total = totalGroups.length;
     const productIds = sales.map((item) => item.productId);
 
     const products = await this.prisma.product.findMany({
@@ -78,10 +84,10 @@ export class ReportsService {
 
       return {
         productId: sale.productId,
-        productName: product?.name,
-        price: product?.price,
-        image: product?.image,
-        category: product?.category?.name,
+        productName: product?.name ?? 'Unknown Product',
+        price: product?.price ?? 0,
+        image: product?.image ?? null,
+        category: product?.category?.name ?? 'Uncategorized',
         quantitySold: quantitySold,
         totalSales: totalSales,
       };
@@ -106,6 +112,14 @@ export class ReportsService {
     page: number,
     limit: number,
   ) {
+    // Validate branch exists
+    await ensureExists(
+      this.prisma.branch.findUnique({
+        where: { id: branchId },
+      }),
+      'Branch not found',
+    );
+
     const now = new Date();
 
     let startDate: Date;
@@ -118,12 +132,14 @@ export class ReportsService {
 
     const skip = (page - 1) * limit;
 
-    switch (period) {
+    const sanitizedPeriod = (period || '').toLowerCase().trim();
+
+    switch (sanitizedPeriod) {
       case 'daily':
-        startDate = new Date();
+        startDate = new Date(now);
         startDate.setHours(0, 0, 0, 0);
 
-        endDate = new Date();
+        endDate = new Date(now);
         endDate.setHours(23, 59, 59, 999);
 
         message = 'Daily product sales report fetched successfully';
@@ -166,7 +182,9 @@ export class ReportsService {
         break;
 
       default:
-        throw new Error('Invalid period. Use daily, weekly, monthly or yearly');
+        throw new BadRequestException(
+          'Invalid period. Use daily, weekly, monthly or yearly',
+        );
     }
 
     return this.getProductSalesByDateRange(
@@ -180,3 +198,4 @@ export class ReportsService {
     );
   }
 }
+
