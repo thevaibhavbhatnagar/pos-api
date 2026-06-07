@@ -55,6 +55,7 @@ const modules: ModuleTree[] = [
     children: [
       { key: 'categories', url: '/categories' },
       { key: 'products', url: '/products' },
+      { key: 'addons', url: '/addons' },
       { key: 'users', url: '/users' },
       { key: 'branches', url: '/branches' },
       { key: 'roles', url: '/roles' },
