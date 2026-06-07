@@ -90,6 +90,11 @@ export type Orders = Prisma.OrdersModel
  */
 export type OrderItem = Prisma.OrderItemModel
 /**
+ * Model OrderItemAddon
+ * 
+ */
+export type OrderItemAddon = Prisma.OrderItemAddonModel
+/**
  * Model Product
  * 
  */

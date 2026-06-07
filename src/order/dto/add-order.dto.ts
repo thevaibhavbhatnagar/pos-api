@@ -61,4 +61,9 @@ class AddOrderItemsDto {
   @IsNumber()
   @IsNotEmpty()
   price: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  addonIds?: string[];
 }

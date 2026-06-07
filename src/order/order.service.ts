@@ -61,6 +61,14 @@ export class OrderService {
             price: true,
           },
         },
+        addons: {
+          select: {
+            id: true,
+            addonId: true,
+            name: true,
+            price: true,
+          },
+        },
       },
     },
 
@@ -162,16 +170,19 @@ export class OrderService {
       data: order,
     };
   }
-
   async create(dto: AddOrderDto, user: any) {
+    // Validate branch exists
     await this.ensureBranchExists(this.prisma, dto.branchId);
 
+    // Order must contain at least one item
     if (!dto.items || dto.items.length === 0) {
       throw new BadRequestException('Order must contain at least one item');
     }
 
     return this.prisma.$transaction(async (tx) => {
-      // Get last order for bill no
+      // =========================================
+      // Generate Next Invoice Number
+      // =========================================
       const lastOrder = await tx.orders.findFirst({
         orderBy: {
           createdAt: 'desc',
@@ -184,35 +195,98 @@ export class OrderService {
 
       let subTotal = 0;
 
-      // prepare order items with total price
+      // =========================================
+      // Prepare Order Items
+      // =========================================
       const orderItems = await Promise.all(
         dto.items.map(async (item) => {
+          // Fetch product
           const product = await tx.product.findUnique({
             where: {
               id: item.productId,
             },
           });
+
           if (!product) {
-            throw new NotFoundException('Product not found');
+            throw new NotFoundException(`Product not found: ${item.productId}`);
           }
 
-          const total = product.price * item.quantity;
+          // =========================================
+          // Fetch Selected Addons
+          // =========================================
+          const addons = item.addonIds?.length
+            ? await tx.addon.findMany({
+                where: {
+                  id: {
+                    in: item.addonIds,
+                  },
+                  isActive: true,
+                },
+              })
+            : [];
+
+          // Ensure all addon ids are valid
+          if (item.addonIds?.length && addons.length !== item.addonIds.length) {
+            throw new BadRequestException('One or more addons are invalid');
+          }
+
+          // =========================================
+          // Calculate Item Price
+          // =========================================
+
+          // Sum of addon prices
+          const addonTotal = addons.reduce(
+            (sum, addon) => sum + addon.price,
+            0,
+          );
+
+          // Product price + selected addons
+          const itemPrice = product.price + addonTotal;
+
+          // Final line total
+          const total = itemPrice * item.quantity;
+
+          // Add to order subtotal
           subTotal += total;
 
+          // =========================================
+          // Create OrderItem + OrderItemAddon
+          // =========================================
           return {
             productId: item.productId,
             quantity: item.quantity,
-            price: product.price,
+
+            // Snapshot price at ordering time
+            price: itemPrice,
+
             total,
+
+            addons: {
+              create: addons.map((addon) => ({
+                // Reference to original addon
+                addonId: addon.id,
+
+                // Snapshot fields
+                name: addon.name,
+                price: addon.price,
+              })),
+            },
           };
         }),
       );
 
+      // =========================================
+      // Calculate Final Totals
+      // =========================================
       const discountAmount = dto.discountAmount ?? 0;
+
       const taxAmount = dto.taxAmount ?? 0;
+
       const totalAmount = subTotal - discountAmount + taxAmount;
 
-      //  Create order
+      // =========================================
+      // Create Order
+      // =========================================
       const order = await tx.orders.create({
         data: {
           billNo: nextBillNo,
@@ -220,10 +294,10 @@ export class OrderService {
           branchId: user.branchId,
           userId: dto.userId,
 
-          subTotal: subTotal,
-          discountAmount: discountAmount,
-          taxAmount: taxAmount,
-          totalAmount: totalAmount,
+          subTotal,
+          discountAmount,
+          taxAmount,
+          totalAmount,
 
           paymentStatus: 'PENDING',
           status: 'PENDING',
@@ -236,16 +310,20 @@ export class OrderService {
             create: orderItems,
           },
         },
+
         select: this.orderSelect,
       });
 
-      // Create KOT
+      // =========================================
+      // Create Kitchen Order Ticket (KOT)
+      // =========================================
       const kot = await tx.kot.create({
         data: {
           kotNo: `KOT-${Date.now()}`,
           orderId: order.id,
           branchId: user.branchId,
           status: 'PENDING',
+
           items: {
             create: dto.items.map((item) => ({
               productId: item.productId,
@@ -253,9 +331,13 @@ export class OrderService {
             })),
           },
         },
+
         select: this.kotSelectItem,
       });
 
+      // =========================================
+      // Return Response
+      // =========================================
       return {
         message: 'Order created successfully',
         data: {
@@ -275,41 +357,63 @@ export class OrderService {
 | - Existing KOTs should never be modified
 | - Kitchen history must remain intact
 | - New items generate new KOTs
+| - Product prices are always fetched from DB
+| - Selected addons are stored as snapshots
 |
 | Flow:
 |
-| 1. Find existing order
+| 1. Find Existing Order
 |    - Validate order exists
+|    - Validate branch ownership
 |
-| 2. Validate incoming products
-|    - Ensure all products exist in DB
-|    - Use DB price for security
+| 2. Validate Incoming Products
+|    - Ensure all products exist
+|    - Use DB price instead of frontend price
 |
-| 3. Prepare new order items
-|    - Calculate item totals
-|    - Calculate newly added subtotal
+| 3. Validate Incoming Addons
+|    - Ensure all addon IDs exist
+|    - Ensure addons are active
 |
-| 4. Append new order items
-|    - Do NOT delete previous order items
-|    - Preserve existing order history
+| 4. Calculate Item Totals
+|    - Product Price
+|    - Addon Total
+|    - Item Price = Product + Addons
+|    - Line Total = Item Price × Quantity
 |
-| 5. Recalculate order totals
-|    - Existing subtotal + new subtotal
-|    - Apply tax and discount
+| 5. Create Order Item Snapshots
+|    - Store product price at order time
+|    - Store addon name and price at order time
+|    - Preserve historical accuracy
 |
-| 6. Update order details
-|    - Update totals
+| 6. Append New Order Items
+|    - Do NOT modify existing items
+|    - Do NOT delete existing items
+|    - Preserve order history
+|
+| 7. Recalculate Order Totals
+|    - Existing Subtotal + New Subtotal
+|    - Apply Discount
+|    - Apply Tax
+|
+| 8. Update Order
+|    - Update subtotal
+|    - Update tax
+|    - Update discount
+|    - Update total amount
 |    - Update payment method
 |
-| 7. Create NEW KOT
-|    - Generate separate KOT for newly added items
+| 9. Create New KOT
+|    - Generate separate KOT
+|    - Include newly added products
 |    - Preserve previous KOT history
 |
 | Result:
 |
 | Order
 |   ├── Existing Items
+|   ├── Existing Addons
 |   ├── Newly Added Items
+|   └── Newly Added Addons
 |
 | KOT-001
 |   ├── Existing Kitchen Items
@@ -317,21 +421,35 @@ export class OrderService {
 | KOT-002
 |   ├── Newly Added Kitchen Items
 |
+| OrderItem
+|   ├── Product Snapshot
+|   └── OrderItemAddon[]
+|
+| OrderItemAddon
+|   ├── addonId
+|   ├── name
+|   └── price
+|
 |--------------------------------------------------------------------------
 */
   async update(id: string, dto: UpdateOrderDto, user: any) {
     if (!dto.items || dto.items.length === 0) {
       throw new BadRequestException('Order must contain at least one item');
     }
+
     return this.prisma.$transaction(async (tx) => {
-      // Check order exists
-      const existingOrder = await tx.orders.findUnique({
-        where: { id, branchId: user.branchId },
+      // =========================================
+      // Check Order Exists
+      // =========================================
+      const existingOrder = await tx.orders.findFirst({
+        where: {
+          id,
+          branchId: user.branchId,
+        },
 
         select: {
           id: true,
           subTotal: true,
-          totalAmount: true,
         },
       });
 
@@ -341,9 +459,12 @@ export class OrderService {
 
       let newSubTotal = 0;
 
-      // Prepare new order items
+      // =========================================
+      // Prepare New Order Items
+      // =========================================
       const newOrderItems = await Promise.all(
         dto.items.map(async (item) => {
+          // Fetch Product
           const product = await tx.product.findUnique({
             where: {
               id: item.productId,
@@ -351,39 +472,92 @@ export class OrderService {
           });
 
           if (!product) {
-            throw new NotFoundException('Product not found');
+            throw new NotFoundException(`Product not found: ${item.productId}`);
           }
 
-          const total = product.price * item.quantity;
+          // =========================================
+          // Fetch Selected Addons
+          // =========================================
+          const addons = item.addonIds?.length
+            ? await tx.addon.findMany({
+                where: {
+                  id: {
+                    in: item.addonIds,
+                  },
+                  isActive: true,
+                },
+              })
+            : [];
+
+          // Validate Addons
+          if (item.addonIds?.length && addons.length !== item.addonIds.length) {
+            throw new BadRequestException('One or more addons are invalid');
+          }
+
+          // =========================================
+          // Calculate Price
+          // =========================================
+          const addonTotal = addons.reduce(
+            (sum, addon) => sum + addon.price,
+            0,
+          );
+
+          const itemPrice = product.price + addonTotal;
+
+          const total = itemPrice * item.quantity;
 
           newSubTotal += total;
 
           return {
-            orderId: id,
             productId: item.productId,
             quantity: item.quantity,
-            price: product.price,
+            price: itemPrice,
             total,
+
+            addons: {
+              create: addons.map((addon) => ({
+                addonId: addon.id,
+
+                // Snapshot values
+                name: addon.name,
+                price: addon.price,
+              })),
+            },
           };
         }),
       );
 
-      // Append new order items
-      await tx.orderItem.createMany({
-        data: newOrderItems,
-      });
+      // =========================================
+      // Append New Order Items
+      // createMany cannot create nested addons
+      // =========================================
+      for (const item of newOrderItems) {
+        await tx.orderItem.create({
+          data: {
+            orderId: id,
+            ...item,
+          },
+        });
+      }
 
+      // =========================================
+      // Recalculate Totals
+      // =========================================
       const discountAmount = dto.discountAmount ?? 0;
+
       const taxAmount = dto.taxAmount ?? 0;
 
-      // Update totals
       const subTotal = (existingOrder.subTotal ?? 0) + newSubTotal;
 
       const totalAmount = subTotal - discountAmount + taxAmount;
 
-      // Update order
+      // =========================================
+      // Update Order
+      // =========================================
       const order = await tx.orders.update({
-        where: { id },
+        where: {
+          id,
+        },
 
         data: {
           subTotal,
@@ -397,7 +571,9 @@ export class OrderService {
         select: this.orderSelect,
       });
 
-      // Create NEW KOT
+      // =========================================
+      // Create New KOT
+      // =========================================
       await tx.kot.create({
         data: {
           kotNo: `KOT-${Date.now()}`,
@@ -420,188 +596,6 @@ export class OrderService {
       };
     });
   }
-
-  //   async update(id: string, dto: UpdateOrderDto, user: any) {
-  //   return this.prisma.$transaction(async (tx) => {
-  //     // Check order exists
-  //     const existingOrder = await tx.orders.findFirst({
-  //       where: {
-  //         id,
-  //         branchId: user.branchId,
-  //       },
-  //       select: {
-  //         id: true,
-  //       },
-  //     });
-
-  //     if (!existingOrder) {
-  //       throw new NotFoundException('Order not found');
-  //     }
-
-  //     // Get existing order items
-  //     const existingItems = await tx.orderItem.findMany({
-  //       where: {
-  //         orderId: id,
-  //       },
-  //     });
-
-  //     // Create map for quick lookup
-  //     const existingItemsMap = new Map(
-  //       existingItems.map((item) => [item.productId, item]),
-  //     );
-
-  //     // Store KOT items only for NEWLY added qty
-  //     const kotItems: {
-  //       productId: string;
-  //       quantity: number;
-  //     }[] = [];
-
-  //     // Process all incoming items
-  //     for (const item of dto.items) {
-  //       const product = await tx.product.findUnique({
-  //         where: {
-  //           id: item.productId,
-  //         },
-  //       });
-
-  //       if (!product) {
-  //         throw new NotFoundException(
-  //           `Product not found: ${item.productId}`,
-  //         );
-  //       }
-
-  //       const existingItem = existingItemsMap.get(item.productId);
-
-  //       // =========================================
-  //       // EXISTING ITEM
-  //       // =========================================
-  //       if (existingItem) {
-  //         const oldQty = existingItem.quantity;
-  //         const newQty = item.quantity;
-
-  //         // SAME QTY → skip
-  //         if (oldQty === newQty) {
-  //           continue;
-  //         }
-
-  //         // UPDATE EXISTING ITEM
-  //         await tx.orderItem.update({
-  //           where: {
-  //             id: existingItem.id,
-  //           },
-  //           data: {
-  //             quantity: newQty,
-  //             price: product.price,
-  //             total: product.price * newQty,
-  //           },
-  //         });
-
-  //         // ONLY CREATE KOT FOR EXTRA QTY
-  //         const extraQty = newQty - oldQty;
-
-  //         if (extraQty > 0) {
-  //           kotItems.push({
-  //             productId: item.productId,
-  //             quantity: extraQty,
-  //           });
-  //         }
-  //       }
-
-  //       // =========================================
-  //       // NEW ITEM
-  //       // =========================================
-  //       else {
-  //         await tx.orderItem.create({
-  //           data: {
-  //             orderId: id,
-  //             productId: item.productId,
-  //             quantity: item.quantity,
-  //             price: product.price,
-  //             total: product.price * item.quantity,
-  //           },
-  //         });
-
-  //         // Entire qty goes to KOT
-  //         kotItems.push({
-  //           productId: item.productId,
-  //           quantity: item.quantity,
-  //         });
-  //       }
-  //     }
-
-  //     // =========================================
-  //     // RECALCULATE TOTALS
-  //     // =========================================
-
-  //     const allItems = await tx.orderItem.findMany({
-  //       where: {
-  //         orderId: id,
-  //       },
-  //       select: {
-  //         total: true,
-  //       },
-  //     });
-
-  //     const subTotal = allItems.reduce(
-  //       (sum, item) => sum + Number(item.total),
-  //       0,
-  //     );
-
-  //     const discountAmount = dto.discountAmount ?? 0;
-  //     const taxAmount = dto.taxAmount ?? 0;
-
-  //     const totalAmount =
-  //       subTotal - discountAmount + taxAmount;
-
-  //     // =========================================
-  //     // UPDATE ORDER
-  //     // =========================================
-
-  //     const order = await tx.orders.update({
-  //       where: {
-  //         id,
-  //       },
-  //       data: {
-  //         subTotal,
-  //         discountAmount,
-  //         taxAmount,
-  //         totalAmount,
-
-  //         paymentMethod:
-  //           dto.paymentMethod ?? null,
-  //       },
-
-  //       select: this.orderSelect,
-  //     });
-
-  //     // =========================================
-  //     // CREATE KOT ONLY IF NEW ITEMS ADDED
-  //     // =========================================
-
-  //     if (kotItems.length > 0) {
-  //       await tx.kot.create({
-  //         data: {
-  //           kotNo: `KOT-${Date.now()}`,
-  //           orderId: id,
-  //           branchId: user.branchId,
-  //           status: 'PENDING',
-
-  //           items: {
-  //             create: kotItems.map((item) => ({
-  //               productId: item.productId,
-  //               quantity: item.quantity,
-  //             })),
-  //           },
-  //         },
-  //       });
-  //     }
-
-  //     return {
-  //       message: 'Order updated successfully',
-  //       data: order,
-  //     };
-  //   });
-  // }
   async delete(id: string, user: any) {
     const order = await this.prisma.orders.delete({
       where: { id },

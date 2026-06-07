@@ -1,4 +1,13 @@
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, ValidateNested, } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
 
 enum PaymentMethod {
   CASH = 'CASH',
@@ -43,8 +52,9 @@ class UpdateOrderItemsDto {
   @IsNotEmpty()
   quantity: number;
 
-  @IsNumber()
-  @IsNotEmpty()
-  price: number;
-}
 
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  addonIds?: string[];
+}

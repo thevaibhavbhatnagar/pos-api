@@ -61,4 +61,25 @@ model OrderItem {
   total     Float
   order     Orders   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
+
+  addons    OrderItemAddon[]
+}
+
+model OrderItemAddon {
+  id String @id @default(uuid())
+
+  orderItemId String
+
+  addonId String?
+
+  // Snapshot values
+  name  String
+  price Float
+
+  orderItem OrderItem @relation( fields: [orderItemId], references: [id], onDelete: Cascade ) 
+  
+  addon Addon? @relation( fields: [addonId], references: [id] )
+
+  @@index([orderItemId])
+  @@index([addonId])
 }

@@ -61,6 +61,7 @@ export const ModelName = {
   Module: 'Module',
   Orders: 'Orders',
   OrderItem: 'OrderItem',
+  OrderItemAddon: 'OrderItemAddon',
   Product: 'Product',
   Role: 'Role',
   Permission: 'Permission',
@@ -217,6 +218,17 @@ export const OrderItemScalarFieldEnum = {
 } as const
 
 export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
+
+
+export const OrderItemAddonScalarFieldEnum = {
+  id: 'id',
+  orderItemId: 'orderItemId',
+  addonId: 'addonId',
+  name: 'name',
+  price: 'price'
+} as const
+
+export type OrderItemAddonScalarFieldEnum = (typeof OrderItemAddonScalarFieldEnum)[keyof typeof OrderItemAddonScalarFieldEnum]
 
 
 export const ProductScalarFieldEnum = {

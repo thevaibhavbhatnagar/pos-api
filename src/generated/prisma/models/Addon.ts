@@ -225,6 +225,7 @@ export type AddonWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Addon"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Addon"> | Date | string
   productAddons?: Prisma.ProductAddonListRelationFilter
+  orderItemAddons?: Prisma.OrderItemAddonListRelationFilter
 }
 
 export type AddonOrderByWithRelationInput = {
@@ -235,6 +236,7 @@ export type AddonOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   productAddons?: Prisma.ProductAddonOrderByRelationAggregateInput
+  orderItemAddons?: Prisma.OrderItemAddonOrderByRelationAggregateInput
 }
 
 export type AddonWhereUniqueInput = Prisma.AtLeast<{
@@ -248,6 +250,7 @@ export type AddonWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Addon"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Addon"> | Date | string
   productAddons?: Prisma.ProductAddonListRelationFilter
+  orderItemAddons?: Prisma.OrderItemAddonListRelationFilter
 }, "id">
 
 export type AddonOrderByWithAggregationInput = {
@@ -284,6 +287,7 @@ export type AddonCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productAddons?: Prisma.ProductAddonCreateNestedManyWithoutAddonInput
+  orderItemAddons?: Prisma.OrderItemAddonCreateNestedManyWithoutAddonInput
 }
 
 export type AddonUncheckedCreateInput = {
@@ -294,6 +298,7 @@ export type AddonUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productAddons?: Prisma.ProductAddonUncheckedCreateNestedManyWithoutAddonInput
+  orderItemAddons?: Prisma.OrderItemAddonUncheckedCreateNestedManyWithoutAddonInput
 }
 
 export type AddonUpdateInput = {
@@ -304,6 +309,7 @@ export type AddonUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productAddons?: Prisma.ProductAddonUpdateManyWithoutAddonNestedInput
+  orderItemAddons?: Prisma.OrderItemAddonUpdateManyWithoutAddonNestedInput
 }
 
 export type AddonUncheckedUpdateInput = {
@@ -314,6 +320,7 @@ export type AddonUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productAddons?: Prisma.ProductAddonUncheckedUpdateManyWithoutAddonNestedInput
+  orderItemAddons?: Prisma.OrderItemAddonUncheckedUpdateManyWithoutAddonNestedInput
 }
 
 export type AddonCreateManyInput = {
@@ -383,6 +390,11 @@ export type AddonScalarRelationFilter = {
   isNot?: Prisma.AddonWhereInput
 }
 
+export type AddonNullableScalarRelationFilter = {
+  is?: Prisma.AddonWhereInput | null
+  isNot?: Prisma.AddonWhereInput | null
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -417,6 +429,22 @@ export type AddonUpdateOneRequiredWithoutProductAddonsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AddonUpdateToOneWithWhereWithoutProductAddonsInput, Prisma.AddonUpdateWithoutProductAddonsInput>, Prisma.AddonUncheckedUpdateWithoutProductAddonsInput>
 }
 
+export type AddonCreateNestedOneWithoutOrderItemAddonsInput = {
+  create?: Prisma.XOR<Prisma.AddonCreateWithoutOrderItemAddonsInput, Prisma.AddonUncheckedCreateWithoutOrderItemAddonsInput>
+  connectOrCreate?: Prisma.AddonCreateOrConnectWithoutOrderItemAddonsInput
+  connect?: Prisma.AddonWhereUniqueInput
+}
+
+export type AddonUpdateOneWithoutOrderItemAddonsNestedInput = {
+  create?: Prisma.XOR<Prisma.AddonCreateWithoutOrderItemAddonsInput, Prisma.AddonUncheckedCreateWithoutOrderItemAddonsInput>
+  connectOrCreate?: Prisma.AddonCreateOrConnectWithoutOrderItemAddonsInput
+  upsert?: Prisma.AddonUpsertWithoutOrderItemAddonsInput
+  disconnect?: Prisma.AddonWhereInput | boolean
+  delete?: Prisma.AddonWhereInput | boolean
+  connect?: Prisma.AddonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AddonUpdateToOneWithWhereWithoutOrderItemAddonsInput, Prisma.AddonUpdateWithoutOrderItemAddonsInput>, Prisma.AddonUncheckedUpdateWithoutOrderItemAddonsInput>
+}
+
 export type AddonCreateWithoutProductAddonsInput = {
   id?: string
   name: string
@@ -424,6 +452,7 @@ export type AddonCreateWithoutProductAddonsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  orderItemAddons?: Prisma.OrderItemAddonCreateNestedManyWithoutAddonInput
 }
 
 export type AddonUncheckedCreateWithoutProductAddonsInput = {
@@ -433,6 +462,7 @@ export type AddonUncheckedCreateWithoutProductAddonsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  orderItemAddons?: Prisma.OrderItemAddonUncheckedCreateNestedManyWithoutAddonInput
 }
 
 export type AddonCreateOrConnectWithoutProductAddonsInput = {
@@ -458,6 +488,7 @@ export type AddonUpdateWithoutProductAddonsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItemAddons?: Prisma.OrderItemAddonUpdateManyWithoutAddonNestedInput
 }
 
 export type AddonUncheckedUpdateWithoutProductAddonsInput = {
@@ -467,6 +498,63 @@ export type AddonUncheckedUpdateWithoutProductAddonsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItemAddons?: Prisma.OrderItemAddonUncheckedUpdateManyWithoutAddonNestedInput
+}
+
+export type AddonCreateWithoutOrderItemAddonsInput = {
+  id?: string
+  name: string
+  price: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  productAddons?: Prisma.ProductAddonCreateNestedManyWithoutAddonInput
+}
+
+export type AddonUncheckedCreateWithoutOrderItemAddonsInput = {
+  id?: string
+  name: string
+  price: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  productAddons?: Prisma.ProductAddonUncheckedCreateNestedManyWithoutAddonInput
+}
+
+export type AddonCreateOrConnectWithoutOrderItemAddonsInput = {
+  where: Prisma.AddonWhereUniqueInput
+  create: Prisma.XOR<Prisma.AddonCreateWithoutOrderItemAddonsInput, Prisma.AddonUncheckedCreateWithoutOrderItemAddonsInput>
+}
+
+export type AddonUpsertWithoutOrderItemAddonsInput = {
+  update: Prisma.XOR<Prisma.AddonUpdateWithoutOrderItemAddonsInput, Prisma.AddonUncheckedUpdateWithoutOrderItemAddonsInput>
+  create: Prisma.XOR<Prisma.AddonCreateWithoutOrderItemAddonsInput, Prisma.AddonUncheckedCreateWithoutOrderItemAddonsInput>
+  where?: Prisma.AddonWhereInput
+}
+
+export type AddonUpdateToOneWithWhereWithoutOrderItemAddonsInput = {
+  where?: Prisma.AddonWhereInput
+  data: Prisma.XOR<Prisma.AddonUpdateWithoutOrderItemAddonsInput, Prisma.AddonUncheckedUpdateWithoutOrderItemAddonsInput>
+}
+
+export type AddonUpdateWithoutOrderItemAddonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productAddons?: Prisma.ProductAddonUpdateManyWithoutAddonNestedInput
+}
+
+export type AddonUncheckedUpdateWithoutOrderItemAddonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productAddons?: Prisma.ProductAddonUncheckedUpdateManyWithoutAddonNestedInput
 }
 
 
@@ -476,10 +564,12 @@ export type AddonUncheckedUpdateWithoutProductAddonsInput = {
 
 export type AddonCountOutputType = {
   productAddons: number
+  orderItemAddons: number
 }
 
 export type AddonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productAddons?: boolean | AddonCountOutputTypeCountProductAddonsArgs
+  orderItemAddons?: boolean | AddonCountOutputTypeCountOrderItemAddonsArgs
 }
 
 /**
@@ -499,6 +589,13 @@ export type AddonCountOutputTypeCountProductAddonsArgs<ExtArgs extends runtime.T
   where?: Prisma.ProductAddonWhereInput
 }
 
+/**
+ * AddonCountOutputType without action
+ */
+export type AddonCountOutputTypeCountOrderItemAddonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderItemAddonWhereInput
+}
+
 
 export type AddonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -508,6 +605,7 @@ export type AddonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdAt?: boolean
   updatedAt?: boolean
   productAddons?: boolean | Prisma.Addon$productAddonsArgs<ExtArgs>
+  orderItemAddons?: boolean | Prisma.Addon$orderItemAddonsArgs<ExtArgs>
   _count?: boolean | Prisma.AddonCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["addon"]>
 
@@ -541,6 +639,7 @@ export type AddonSelectScalar = {
 export type AddonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "price" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["addon"]>
 export type AddonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productAddons?: boolean | Prisma.Addon$productAddonsArgs<ExtArgs>
+  orderItemAddons?: boolean | Prisma.Addon$orderItemAddonsArgs<ExtArgs>
   _count?: boolean | Prisma.AddonCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AddonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -550,6 +649,7 @@ export type $AddonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Addon"
   objects: {
     productAddons: Prisma.$ProductAddonPayload<ExtArgs>[]
+    orderItemAddons: Prisma.$OrderItemAddonPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -953,6 +1053,7 @@ readonly fields: AddonFieldRefs;
 export interface Prisma__AddonClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   productAddons<T extends Prisma.Addon$productAddonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Addon$productAddonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductAddonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  orderItemAddons<T extends Prisma.Addon$orderItemAddonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Addon$orderItemAddonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemAddonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1402,6 +1503,30 @@ export type Addon$productAddonsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.ProductAddonScalarFieldEnum | Prisma.ProductAddonScalarFieldEnum[]
+}
+
+/**
+ * Addon.orderItemAddons
+ */
+export type Addon$orderItemAddonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderItemAddon
+   */
+  select?: Prisma.OrderItemAddonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrderItemAddon
+   */
+  omit?: Prisma.OrderItemAddonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderItemAddonInclude<ExtArgs> | null
+  where?: Prisma.OrderItemAddonWhereInput
+  orderBy?: Prisma.OrderItemAddonOrderByWithRelationInput | Prisma.OrderItemAddonOrderByWithRelationInput[]
+  cursor?: Prisma.OrderItemAddonWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderItemAddonScalarFieldEnum | Prisma.OrderItemAddonScalarFieldEnum[]
 }
 
 /**

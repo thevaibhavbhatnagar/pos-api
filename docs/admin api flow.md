@@ -1651,7 +1651,8 @@ Lists all orders belonging to the authenticated user's branch.
             "id": "prod-uuid-1",
             "name": "French Fries",
             "price": 5.00
-          }
+          },
+          "addons": []
         }
       ],
       "createdAt": "2026-06-05T08:00:00.000Z",
@@ -1709,14 +1710,22 @@ Retrieves details of a single order under the user's branch, including all order
       {
         "id": "item-uuid-1",
         "quantity": 2,
-        "price": 5.00,
-        "total": 10.00,
+        "price": 6.50,
+        "total": 13.00,
         "productId": "prod-uuid-1",
         "product": {
           "id": "prod-uuid-1",
           "name": "French Fries",
           "price": 5.00
-        }
+        },
+        "addons": [
+          {
+            "id": "order-item-addon-uuid-1",
+            "addonId": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+            "name": "Extra Cheese",
+            "price": 1.50
+          }
+        ]
       }
     ],
     "kots": [
@@ -1765,13 +1774,14 @@ Creates a new order with items, computes billing details (using database product
 | `items[].productId` | `string` | Yes | Product UUID. |
 | `items[].quantity` | `number` | Yes | Quantity to buy. |
 | `items[].price` | `number` | Yes | Declared product price. |
+| `items[].addonIds` | `string[]` | No | Optional array of active addon UUIDs. |
 
 ##### Example Payload
 ```json
 {
   "branchId": "e3f08ca7-bfd2-43bb-a4ab-734f19b21f31",
   "userId": "e4b3c9f2-21a4-4df8-92a1-faee98c25cf6",
-  "totalAmount": 10.00,
+  "totalAmount": 13.00,
   "discountAmount": 0,
   "taxAmount": 0,
   "notes": "No spicy",
@@ -1779,7 +1789,8 @@ Creates a new order with items, computes billing details (using database product
     {
       "productId": "prod-uuid-1",
       "quantity": 2,
-      "price": 5.00
+      "price": 5.00,
+      "addonIds": ["b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"]
     }
   ]
 }
@@ -1796,8 +1807,8 @@ Returns the created order details and the automatically generated initial KOT ti
     "order": {
       "id": "7b0b2321-df62-4b2a-8ff4-934c2b9a32c2",
       "billNo": "INV-1002",
-      "totalAmount": 10.00,
-      "subTotal": 10.00,
+      "totalAmount": 13.00,
+      "subTotal": 13.00,
       "discountAmount": 0,
       "taxAmount": 0,
       "paymentMethod": null,
@@ -1812,14 +1823,22 @@ Returns the created order details and the automatically generated initial KOT ti
         {
           "id": "item-uuid-2",
           "quantity": 2,
-          "price": 5.00,
-          "total": 10.00,
+          "price": 6.50,
+          "total": 13.00,
           "productId": "prod-uuid-1",
           "product": {
             "id": "prod-uuid-1",
             "name": "French Fries",
             "price": 5.00
-          }
+          },
+          "addons": [
+            {
+              "id": "order-item-addon-uuid-1",
+              "addonId": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+              "name": "Extra Cheese",
+              "price": 1.50
+            }
+          ]
         }
       ]
     },
@@ -1865,13 +1884,16 @@ All fields below are required.
 | `taxAmount` | `number` | No | Updated tax amount. |
 | `paymentMethod` | `string` | Yes | Chosen payment type (`CASH`, `CARD`, `UPI`). |
 | `items` | `object[]` | Yes | List of **newly added items** to append to the order. |
+| `items[].productId` | `string` | Yes | Product UUID. |
+| `items[].quantity` | `number` | Yes | Quantity to buy. |
+| `items[].addonIds` | `string[]` | No | Optional array of active addon UUIDs. |
 
 ##### Example Payload
 ```json
 {
   "branchId": "e3f08ca7-bfd2-43bb-a4ab-734f19b21f31",
   "userId": "e4b3c9f2-21a4-4df8-92a1-faee98c25cf6",
-  "totalAmount": 15.00,
+  "totalAmount": 19.50,
   "discountAmount": 0,
   "taxAmount": 0,
   "paymentMethod": "CASH",
@@ -1879,7 +1901,7 @@ All fields below are required.
     {
       "productId": "prod-uuid-2",
       "quantity": 1,
-      "price": 5.00
+      "addonIds": ["b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"]
     }
   ]
 }
@@ -1895,8 +1917,8 @@ Returns the updated order with all appended items.
   "data": {
     "id": "7b0b2321-df62-4b2a-8ff4-934c2b9a32c2",
     "billNo": "INV-1002",
-    "totalAmount": 15.00,
-    "subTotal": 15.00,
+    "totalAmount": 19.50,
+    "subTotal": 19.50,
     "discountAmount": 0,
     "taxAmount": 0,
     "paymentMethod": "CASH",
@@ -1911,26 +1933,42 @@ Returns the updated order with all appended items.
       {
         "id": "item-uuid-2",
         "quantity": 2,
-        "price": 5.00,
-        "total": 10.00,
+        "price": 6.50,
+        "total": 13.00,
         "productId": "prod-uuid-1",
         "product": {
           "id": "prod-uuid-1",
           "name": "French Fries",
           "price": 5.00
-        }
+        },
+        "addons": [
+          {
+            "id": "order-item-addon-uuid-1",
+            "addonId": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+            "name": "Extra Cheese",
+            "price": 1.50
+          }
+        ]
       },
       {
         "id": "item-uuid-3",
         "quantity": 1,
-        "price": 5.00,
-        "total": 5.00,
+        "price": 6.50,
+        "total": 6.50,
         "productId": "prod-uuid-2",
         "product": {
           "id": "prod-uuid-2",
           "name": "Onion Rings",
           "price": 5.00
-        }
+        },
+        "addons": [
+          {
+            "id": "order-item-addon-uuid-2",
+            "addonId": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+            "name": "Extra Cheese",
+            "price": 1.50
+          }
+        ]
       }
     ]
   }

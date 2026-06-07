@@ -10,7 +10,9 @@ model Addon {
   updatedAt DateTime @updatedAt
 
   productAddons ProductAddon[]
+  orderItemAddons OrderItemAddon[]
 }
+
 model ProductAddon {
   productId String
   addonId   String
