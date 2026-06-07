@@ -174,6 +174,7 @@ export class ProductService {
   async updateProduct(id: string, dto: UpdateProductDto) {
     const { addonIds = [], ...productData } = dto;
 
+    // Ensure product exists
     await ensureExists(
       this.prisma.product.findUnique({
         where: { id },
@@ -182,11 +183,12 @@ export class ProductService {
       'Product not found',
     );
 
+    // Validate category if user is changing it
     if (productData.categoryId) {
       await this.ensureCategoriesExists(this.prisma, productData.categoryId);
     }
 
-    // Validate addons
+    // Validate all provided addons exist and are active
     if (addonIds.length) {
       const addonsCount = await this.prisma.addon.count({
         where: {
@@ -203,20 +205,48 @@ export class ProductService {
     }
 
     await this.prisma.$transaction(async (tx) => {
+      // Update product details
       await tx.product.update({
         where: { id },
         data: productData,
       });
 
-      await tx.productAddon.deleteMany({
-        where: {
-          productId: id,
-        },
+      // Fetch currently linked addons
+      const existing = await tx.productAddon.findMany({
+        where: { productId: id },
+        select: { addonId: true },
       });
 
-      if (addonIds.length) {
+      // Convert current addon ids into Set for fast lookup
+      const existingIds = new Set(existing.map((item) => item.addonId));
+
+      // Convert incoming addon ids into Set
+      const newIds = new Set(addonIds);
+
+      // Addons that are newly selected by the user
+      const toAdd = addonIds.filter((addonId) => !existingIds.has(addonId));
+
+      // Addons that were previously linked but now removed
+      const toRemove = [...existingIds].filter(
+        (addonId) => !newIds.has(addonId),
+      );
+
+      // Remove unselected addon mappings
+      if (toRemove.length) {
+        await tx.productAddon.deleteMany({
+          where: {
+            productId: id,
+            addonId: {
+              in: toRemove,
+            },
+          },
+        });
+      }
+
+      // Create mappings for newly added addons
+      if (toAdd.length) {
         await tx.productAddon.createMany({
-          data: addonIds.map((addonId) => ({
+          data: toAdd.map((addonId) => ({
             productId: id,
             addonId,
           })),
@@ -224,6 +254,7 @@ export class ProductService {
       }
     });
 
+    // Fetch updated product with relations
     const updatedProduct = await this.prisma.product.findUnique({
       where: { id },
       select: this.productSelect,
