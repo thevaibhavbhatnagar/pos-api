@@ -340,6 +340,9 @@ Deletes a branch by ID. Restricted to `ADMIN` role.
 }
 ```
 
+> [!NOTE]
+> Deletion is protected by a Deletion Relation Guard. If a branch has associated orders, users, or kitchen order tickets (KOTs), the request will fail.
+
 ---
 
 ## 📁 Category Management API
@@ -646,11 +649,9 @@ Lists all products with pagination support. Restricted to `ADMIN` role.
       },
       "productAddons": [
         {
-          "addon": {
-            "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-            "name": "Extra Cheese",
-            "price": 1.5
-          }
+          "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+          "name": "Extra Cheese",
+          "price": 1.5
         }
       ],
       "isKotRequired": true,
@@ -758,11 +759,9 @@ Creates a new product in the inventory. Restricted to `ADMIN` role.
     },
     "productAddons": [
       {
-        "addon": {
-          "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-          "name": "Extra Cheese",
-          "price": 1.5
-        }
+        "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+        "name": "Extra Cheese",
+        "price": 1.5
       }
     ],
     "isKotRequired": false,
@@ -816,11 +815,9 @@ Same schema as the **Add New Product** body (includes optional `addonIds`).
     },
     "productAddons": [
       {
-        "addon": {
-          "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-          "name": "Extra Cheese",
-          "price": 1.5
-        }
+        "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+        "name": "Extra Cheese",
+        "price": 1.5
       }
     ],
     "isKotRequired": false,
@@ -868,6 +865,9 @@ Removes a product from the database. Restricted to `ADMIN` role.
     "createdAt": "2026-06-05T09:00:00.000Z"
   }
 }
+
+> [!NOTE]
+> Deletion is protected by a Deletion Relation Guard. If a product is linked to active order items, kitchen order tickets (KOTs), or product addons, the request will fail.
 ```
 
 ---
@@ -1546,6 +1546,9 @@ Deletes a user account from the database.
   "message": "User deleted successfully"
 }
 ```
+
+> [!NOTE]
+> Deletion is protected by a Deletion Relation Guard. If a user has associated orders, the request will fail.
 
 ---
 
