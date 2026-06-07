@@ -48,6 +48,13 @@ export class ProductService {
     createdAt: true,
   } as const;
 
+  private formatProduct(product: any) {
+    return {
+      ...product,
+      productAddons: product.productAddons.map((item) => item.addon),
+    };
+  }
+
   private ensureCategoriesExists(tx: Prisma.TransactionClient, id: string) {
     return ensureExists(
       tx.category.findFirst({
@@ -105,7 +112,7 @@ export class ProductService {
 
     return {
       message: 'Products fetched successfully',
-      data: products,
+      data: products.map((product) => this.formatProduct(product)),
       meta: {
         total,
         page,
@@ -167,7 +174,7 @@ export class ProductService {
 
     return {
       message: 'Product created successfully',
-      data: product,
+      data: this.formatProduct(product),
     };
   }
 
@@ -262,7 +269,7 @@ export class ProductService {
 
     return {
       message: 'Product updated successfully',
-      data: updatedProduct,
+      data: this.formatProduct(updatedProduct),
     };
   }
 

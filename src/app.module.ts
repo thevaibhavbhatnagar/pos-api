@@ -16,6 +16,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { SessionModule } from './session/session.module';
 import { ApiLoggerMiddleware } from './common/middlewares/api-logger.middleware';
 import { ReportsModule } from './reports/report.module';
+import { AddonModule } from './addons/addon.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { ReportsModule } from './reports/report.module';
     KotModule,
     DashboardModule,
     SessionModule,
-    ReportsModule
+    ReportsModule,
+    AddonModule
   ],
   controllers: [AppController],
   providers: [AppService],
