@@ -1,23 +1,36 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
+import {
+    IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class AddProductDto {
-    @IsString()
-    @IsNotEmpty()
-    name: string; 
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsBoolean()
-    @IsNotEmpty()
-    isActive: boolean;
+  @IsBoolean()
+  @IsNotEmpty()
+  isActive: boolean;
 
-    @IsBoolean()
-    @IsNotEmpty()
-    isKotRequired: boolean;
+  @IsBoolean()
+  @IsNotEmpty()
+  isKotRequired: boolean;
 
-    @IsNumber()
-    @IsNotEmpty()
-    price: number;
+  @IsNumber()
+  @IsNotEmpty()
+  price: number;
 
-    @IsString()
-    @IsNotEmpty()
-    categoryId: string;
+  @IsString()
+  @IsNotEmpty()
+  categoryId: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  addonIds?: string[];
 }

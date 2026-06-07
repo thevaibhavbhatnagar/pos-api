@@ -24,6 +24,7 @@ Choose a resource category below to view detailed endpoints, request parameters,
 *   [🏢 Branch Management](#-branch-management-api) - Centralized and branch lookup management.
 *   [📁 Category Management](#-category-management-api) - Menu category listing, creation, and deletion.
 *   [🍔 Product Inventory](#-product-inventory-api) - Product CRUD and image uploads.
+*   [🧁 Addon Management](#-addon-management-api) - Addons lookup, creation, update, and deletion.
 *   [👥 Role Management](#-role-management-api) - Custom Roles and permission mapping.
 *   [👤 User Accounts](#-user-accounts-api) - User accounts, credentials, and branch assignments.
 *   [🛒 Order Processing](#-order-processing-api) - Complete order creation and updates (Append-Only architecture).
@@ -595,6 +596,15 @@ Fetches products filtered by category ID. Requires user login session.
         "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
         "name": "Fast Food"
       },
+      "productAddons": [
+        {
+          "addon": {
+            "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+            "name": "Extra Cheese",
+            "price": 1.5
+          }
+        }
+      ],
       "isKotRequired": true,
       "price": 8.99,
       "isActive": true,
@@ -634,6 +644,15 @@ Lists all products with pagination support. Restricted to `ADMIN` role.
         "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
         "name": "Fast Food"
       },
+      "productAddons": [
+        {
+          "addon": {
+            "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+            "name": "Extra Cheese",
+            "price": 1.5
+          }
+        }
+      ],
       "isKotRequired": true,
       "price": 8.99,
       "isActive": true,
@@ -675,6 +694,15 @@ Retrieves details of a single product. Restricted to `ADMIN` role.
       "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
       "name": "Fast Food"
     },
+    "productAddons": [
+      {
+        "addon": {
+          "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+          "name": "Extra Cheese",
+          "price": 1.5
+        }
+      }
+    ],
     "isKotRequired": true,
     "price": 8.99,
     "isActive": true,
@@ -700,6 +728,7 @@ Creates a new product in the inventory. Restricted to `ADMIN` role.
 | `isKotRequired` | `boolean` | Yes | True if the product requires sending a Kitchen Order Ticket (KOT) to the kitchen. |
 | `price` | `number` | Yes | Selling price of the item. |
 | `categoryId` | `string` | Yes | Category UUID to link the product to. |
+| `addonIds` | `string[]` | No | Optional list of active addon UUIDs to link to the product. |
 
 ##### Example Payload
 ```json
@@ -708,7 +737,8 @@ Creates a new product in the inventory. Restricted to `ADMIN` role.
   "isActive": true,
   "isKotRequired": false,
   "price": 4.50,
-  "categoryId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+  "categoryId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+  "addonIds": ["b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"]
 }
 ```
 
@@ -726,6 +756,15 @@ Creates a new product in the inventory. Restricted to `ADMIN` role.
       "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
       "name": "Beverages"
     },
+    "productAddons": [
+      {
+        "addon": {
+          "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+          "name": "Extra Cheese",
+          "price": 1.5
+        }
+      }
+    ],
     "isKotRequired": false,
     "price": 4.50,
     "isActive": true,
@@ -747,7 +786,7 @@ Updates an existing product's fields. All fields are required in the payload. Re
 *   `id` (UUID format, required) - The unique ID of the product.
 
 #### Request Body
-Same schema as the **Add New Product** body.
+Same schema as the **Add New Product** body (includes optional `addonIds`).
 
 ##### Example Payload
 ```json
@@ -756,7 +795,8 @@ Same schema as the **Add New Product** body.
   "isActive": true,
   "isKotRequired": false,
   "price": 5.20,
-  "categoryId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+  "categoryId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+  "addonIds": ["b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"]
 }
 ```
 
@@ -774,6 +814,15 @@ Same schema as the **Add New Product** body.
       "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
       "name": "Beverages"
     },
+    "productAddons": [
+      {
+        "addon": {
+          "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+          "name": "Extra Cheese",
+          "price": 1.5
+        }
+      }
+    ],
     "isKotRequired": false,
     "price": 5.20,
     "isActive": true,
@@ -804,6 +853,15 @@ Removes a product from the database. Restricted to `ADMIN` role.
     "categoryId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
     "image": null,
     "imagePublicId": null,
+    "productAddons": [
+      {
+        "addon": {
+          "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+          "name": "Extra Cheese",
+          "price": 1.5
+        }
+      }
+    ],
     "isKotRequired": false,
     "price": 5.20,
     "isActive": true,
@@ -833,6 +891,220 @@ Returns the secure URL and Cloudinary public ID for the uploaded image file. Thi
 {
   "url": "https://res.cloudinary.com/demo/image/upload/v1234567890/products/sample.jpg",
   "public_id": "products/sample"
+}
+```
+
+---
+
+## 🧁 Addon Management API
+
+Endpoints under `/addons` handle addon lookup, creation, updates, and soft-deletion.
+
+---
+
+### 1. Addon Public Lookup
+Fetches a list of all active addons for dropdown lookup menus. No authentication required.
+
+*   **URL:** `/api/v1/addons/lookup`
+*   **Method:** `GET`
+*   **Auth Required:** No
+
+#### Response (200 OK)
+```json
+{
+  "message": "Public addons fetched successfully",
+  "data": [
+    {
+      "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+      "name": "Extra Cheese",
+      "price": 1.5,
+      "isActive": true,
+      "createdAt": "2026-06-07T08:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+### 2. List Addons (Paginated)
+Lists all addons with pagination support. Restricted to `SUPER_ADMIN` and `ADMIN` roles.
+
+*   **URL:** `/api/v1/addons`
+*   **Method:** `GET`
+*   **Auth Required:** Yes (JWT + Role: `SUPER_ADMIN`, `ADMIN`)
+
+#### Query Parameters
+| Parameter | Type | Required | Default | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `page` | `number` | No | `1` | Page number to retrieve (Minimum: `1`) |
+| `limit` | `number` | No | `10` | Number of records per page (Maximum: `100`) |
+
+#### Response (200 OK)
+```json
+{
+  "message": "Addons fetched successfully",
+  "data": [
+    {
+      "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+      "name": "Extra Cheese",
+      "price": 1.5,
+      "isActive": true,
+      "createdAt": "2026-06-07T08:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  }
+}
+```
+
+---
+
+### 3. Find Addon by ID
+Retrieves details of a single addon by its UUID. Restricted to `SUPER_ADMIN` and `ADMIN` roles.
+
+*   **URL:** `/api/v1/addons/:id`
+*   **Method:** `GET`
+*   **Auth Required:** Yes (JWT + Role: `SUPER_ADMIN`, `ADMIN`)
+
+#### Path Parameters
+*   `id` (UUID format, required) - The unique ID of the addon.
+
+#### Response (200 OK)
+```json
+{
+  "message": "Addon fetched successfully",
+  "data": {
+    "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "Extra Cheese",
+    "price": 1.5,
+    "isActive": true,
+    "createdAt": "2026-06-07T08:00:00.000Z"
+  }
+}
+```
+
+#### Errors
+| Status Code | Message | Description |
+| :--- | :--- | :--- |
+| `400 Bad Request` | `Validation failed (uuid v 4 is expected)` | The provided path parameter is not a valid UUID. |
+| `404 Not Found` | `Addon not found` | No addon exists with the given ID. |
+
+---
+
+### 4. Add New Addon
+Creates a new addon. Restricted to `SUPER_ADMIN` and `ADMIN` roles.
+
+*   **URL:** `/api/v1/addons`
+*   **Method:** `POST`
+*   **Auth Required:** Yes (JWT + Role: `SUPER_ADMIN`, `ADMIN`)
+
+#### Request Body
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `name` | `string` | Yes | Name of the addon. Must be unique. |
+| `price` | `number` | Yes | Selling price of the addon. |
+| `isActive` | `boolean` | Yes | Toggle status of the addon. |
+
+##### Example Payload
+```json
+{
+  "name": "Extra Cheese",
+  "price": 1.5,
+  "isActive": true
+}
+```
+
+#### Response (201 Created)
+```json
+{
+  "message": "Addon created successfully",
+  "data": {
+    "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "Extra Cheese",
+    "price": 1.5,
+    "isActive": true,
+    "createdAt": "2026-06-07T09:00:00.000Z"
+  }
+}
+```
+
+#### Errors
+| Status Code | Message | Description |
+| :--- | :--- | :--- |
+| `400 Bad Request` | `Addon already exists` | An addon with the same name already exists. |
+
+---
+
+### 5. Update Addon
+Updates an existing addon. Restricted to `SUPER_ADMIN` and `ADMIN` roles.
+
+*   **URL:** `/api/v1/addons/:id`
+*   **Method:** `PATCH`
+*   **Auth Required:** Yes (JWT + Role: `SUPER_ADMIN`, `ADMIN`)
+
+#### Path Parameters
+*   `id` (UUID format, required) - The unique ID of the addon.
+
+#### Request Body
+All fields are required. Same schema as the **Add New Addon** body.
+
+##### Example Payload
+```json
+{
+  "name": "Premium Extra Cheese",
+  "price": 1.75,
+  "isActive": true
+}
+```
+
+#### Response (200 OK)
+```json
+{
+  "message": "Addon updated successfully",
+  "data": {
+    "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "Premium Extra Cheese",
+    "price": 1.75,
+    "isActive": true,
+    "createdAt": "2026-06-07T09:00:00.000Z"
+  }
+}
+```
+
+#### Errors
+| Status Code | Message | Description |
+| :--- | :--- | :--- |
+| `400 Bad Request` | `Addon already exists` | Another addon with the updated name already exists. |
+| `404 Not Found` | `Addon not found` | The target addon does not exist. |
+
+---
+
+### 6. Delete Addon
+Soft-deletes an addon by updating its `isActive` status to `false`. Restricted to `SUPER_ADMIN` and `ADMIN` roles.
+
+*   **URL:** `/api/v1/addons/:id`
+*   **Method:** `DELETE`
+*   **Auth Required:** Yes (JWT + Role: `SUPER_ADMIN`, `ADMIN`)
+
+#### Path Parameters
+*   `id` (UUID format, required) - The unique ID of the addon.
+
+#### Response (200 OK)
+```json
+{
+  "message": "Addon deleted successfully",
+  "data": {
+    "id": "b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "Premium Extra Cheese",
+    "price": 1.75,
+    "isActive": false,
+    "createdAt": "2026-06-07T09:00:00.000Z"
+  }
 }
 ```
 

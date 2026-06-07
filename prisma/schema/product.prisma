@@ -13,7 +13,9 @@ model Product {
   // RELATION
   orderItems    OrderItem[]
   kotItems      KotItem[]
+  productAddons ProductAddon[]
   category      Category    @relation(fields: [categoryId], references: [id])
+  
 
   @@index([categoryId])
 }

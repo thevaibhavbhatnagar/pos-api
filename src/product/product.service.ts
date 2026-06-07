@@ -31,6 +31,17 @@ export class ProductService {
     image: true,
     imagePublicId: true,
     category: { select: { id: true, name: true } },
+    productAddons: {
+      select: {
+        addon: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+          },
+        },
+      },
+    },
     isKotRequired: true,
     price: true,
     isActive: true,
@@ -66,18 +77,7 @@ export class ProductService {
   async getProductByCategory(category_id: string) {
     const products = await this.prisma.product.findMany({
       where: category_id ? { categoryId: category_id } : {},
-      select: {
-        id: true,
-        name: true,
-        image: true,
-        imagePublicId: true,
-        categoryId: true,
-        category: { select: { id: true, name: true } },
-        isKotRequired: true,
-        price: true,
-        isActive: true,
-        createdAt: true,
-      },
+      select: this.productSelect,
       orderBy: { createdAt: 'desc' },
     });
     return {
@@ -132,10 +132,36 @@ export class ProductService {
   }
 
   async addProduct(dto: AddProductDto) {
-    await this.ensureCategoriesExists(this.prisma, dto.categoryId);
+    const { addonIds = [], ...productData } = dto;
+
+    await this.ensureCategoriesExists(this.prisma, productData.categoryId);
+
+    // Validate addons
+    if (addonIds.length) {
+      const addonsCount = await this.prisma.addon.count({
+        where: {
+          id: {
+            in: addonIds,
+          },
+          isActive: true,
+        },
+      });
+
+      if (addonsCount !== addonIds.length) {
+        throw new BadRequestException('One or more addons are invalid');
+      }
+    }
 
     const product = await this.prisma.product.create({
-      data: dto,
+      data: {
+        ...productData,
+
+        productAddons: {
+          create: addonIds.map((addonId) => ({
+            addonId,
+          })),
+        },
+      },
       select: this.productSelect,
     });
 
@@ -146,14 +172,66 @@ export class ProductService {
   }
 
   async updateProduct(id: string, dto: UpdateProductDto) {
-    const product = await this.prisma.product.update({
+    const { addonIds = [], ...productData } = dto;
+
+    await ensureExists(
+      this.prisma.product.findUnique({
+        where: { id },
+        select: { id: true },
+      }),
+      'Product not found',
+    );
+
+    if (productData.categoryId) {
+      await this.ensureCategoriesExists(this.prisma, productData.categoryId);
+    }
+
+    // Validate addons
+    if (addonIds.length) {
+      const addonsCount = await this.prisma.addon.count({
+        where: {
+          id: {
+            in: addonIds,
+          },
+          isActive: true,
+        },
+      });
+
+      if (addonsCount !== addonIds.length) {
+        throw new BadRequestException('One or more addons are invalid');
+      }
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.product.update({
+        where: { id },
+        data: productData,
+      });
+
+      await tx.productAddon.deleteMany({
+        where: {
+          productId: id,
+        },
+      });
+
+      if (addonIds.length) {
+        await tx.productAddon.createMany({
+          data: addonIds.map((addonId) => ({
+            productId: id,
+            addonId,
+          })),
+        });
+      }
+    });
+
+    const updatedProduct = await this.prisma.product.findUnique({
       where: { id },
-      data: dto,
       select: this.productSelect,
     });
+
     return {
       message: 'Product updated successfully',
-      data: product,
+      data: updatedProduct,
     };
   }
 

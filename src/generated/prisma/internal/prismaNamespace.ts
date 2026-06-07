@@ -384,6 +384,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
+  Addon: 'Addon',
+  ProductAddon: 'ProductAddon',
   api_logs: 'api_logs',
   Branch: 'Branch',
   Category: 'Category',
@@ -412,10 +414,158 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "api_logs" | "branch" | "category" | "kot" | "kotItem" | "module" | "orders" | "orderItem" | "product" | "role" | "permission" | "rolePermission" | "user"
+    modelProps: "addon" | "productAddon" | "api_logs" | "branch" | "category" | "kot" | "kotItem" | "module" | "orders" | "orderItem" | "product" | "role" | "permission" | "rolePermission" | "user"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    Addon: {
+      payload: Prisma.$AddonPayload<ExtArgs>
+      fields: Prisma.AddonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AddonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AddonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload>
+        }
+        findFirst: {
+          args: Prisma.AddonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AddonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload>
+        }
+        findMany: {
+          args: Prisma.AddonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload>[]
+        }
+        create: {
+          args: Prisma.AddonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload>
+        }
+        createMany: {
+          args: Prisma.AddonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AddonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload>[]
+        }
+        delete: {
+          args: Prisma.AddonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload>
+        }
+        update: {
+          args: Prisma.AddonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload>
+        }
+        deleteMany: {
+          args: Prisma.AddonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AddonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AddonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload>[]
+        }
+        upsert: {
+          args: Prisma.AddonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AddonPayload>
+        }
+        aggregate: {
+          args: Prisma.AddonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAddon>
+        }
+        groupBy: {
+          args: Prisma.AddonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AddonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AddonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AddonCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProductAddon: {
+      payload: Prisma.$ProductAddonPayload<ExtArgs>
+      fields: Prisma.ProductAddonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductAddonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductAddonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductAddonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductAddonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload>
+        }
+        findMany: {
+          args: Prisma.ProductAddonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload>[]
+        }
+        create: {
+          args: Prisma.ProductAddonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload>
+        }
+        createMany: {
+          args: Prisma.ProductAddonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductAddonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductAddonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload>
+        }
+        update: {
+          args: Prisma.ProductAddonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductAddonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductAddonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductAddonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductAddonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAddonPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductAddonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductAddon>
+        }
+        groupBy: {
+          args: Prisma.ProductAddonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductAddonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductAddonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductAddonCountAggregateOutputType> | number
+        }
+      }
+    }
     api_logs: {
       payload: Prisma.$api_logsPayload<ExtArgs>
       fields: Prisma.api_logsFieldRefs
@@ -1417,6 +1567,27 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const AddonScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AddonScalarFieldEnum = (typeof AddonScalarFieldEnum)[keyof typeof AddonScalarFieldEnum]
+
+
+export const ProductAddonScalarFieldEnum = {
+  productId: 'productId',
+  addonId: 'addonId',
+  createdAt: 'createdAt'
+} as const
+
+export type ProductAddonScalarFieldEnum = (typeof ProductAddonScalarFieldEnum)[keyof typeof ProductAddonScalarFieldEnum]
+
+
 export const Api_logsScalarFieldEnum = {
   id: 'id',
   method: 'method',
@@ -1655,6 +1826,41 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime'
+ */
+export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime[]'
+ */
+export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -1683,27 +1889,6 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
- * Reference to a field of type 'DateTime'
- */
-export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-    
-
-
-/**
- * Reference to a field of type 'DateTime[]'
- */
-export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-/**
  * Reference to a field of type 'KotStatus'
  */
 export type EnumKotStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KotStatus'>
@@ -1714,20 +1899,6 @@ export type EnumKotStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'KotStatus[]'
  */
 export type ListEnumKotStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KotStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Float'
- */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-/**
- * Reference to a field of type 'Float[]'
- */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -1882,6 +2053,8 @@ export type PrismaClientOptions = ({
   queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
+  addon?: Prisma.AddonOmit
+  productAddon?: Prisma.ProductAddonOmit
   api_logs?: Prisma.api_logsOmit
   branch?: Prisma.BranchOmit
   category?: Prisma.CategoryOmit

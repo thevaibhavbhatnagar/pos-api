@@ -8,6 +8,8 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Addon.js'
+export type * from './models/ProductAddon.js'
 export type * from './models/api_logs.js'
 export type * from './models/Branch.js'
 export type * from './models/Category.js'

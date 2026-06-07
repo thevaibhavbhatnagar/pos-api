@@ -51,6 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Addon: 'Addon',
+  ProductAddon: 'ProductAddon',
   api_logs: 'api_logs',
   Branch: 'Branch',
   Category: 'Category',
@@ -80,6 +82,27 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const AddonScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AddonScalarFieldEnum = (typeof AddonScalarFieldEnum)[keyof typeof AddonScalarFieldEnum]
+
+
+export const ProductAddonScalarFieldEnum = {
+  productId: 'productId',
+  addonId: 'addonId',
+  createdAt: 'createdAt'
+} as const
+
+export type ProductAddonScalarFieldEnum = (typeof ProductAddonScalarFieldEnum)[keyof typeof ProductAddonScalarFieldEnum]
 
 
 export const Api_logsScalarFieldEnum = {
