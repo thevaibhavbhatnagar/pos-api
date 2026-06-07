@@ -58,10 +58,6 @@ class AddOrderItemsDto {
   @IsNotEmpty()
   quantity: number;
 
-  @IsNumber()
-  @IsNotEmpty()
-  price: number;
-
   @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })

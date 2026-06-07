@@ -4,14 +4,13 @@ import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
-  
+
   private getBusinessDayStart(): Date {
     const now = new Date();
 
     const businessStart = new Date(now);
-    businessStart.setHours(19, 0, 0, 0); // 7 PM
+    businessStart.setHours(19, 0, 0, 0);
 
-    // Before 7 PM => business day started yesterday at 7 PM
     if (now.getHours() < 19) {
       businessStart.setDate(businessStart.getDate() - 1);
     }
@@ -36,8 +35,7 @@ export class DashboardService {
 
     const businessDayStart = this.getBusinessDayStart();
 
-    // BRANCH DASHBOARD
-    const [totalOrders, pendingKots] = await this.prisma.$transaction([
+    const [totalOrders, pendingKots, items] = await this.prisma.$transaction([
       this.prisma.orders.count({
         where: {
           branchId: user.branchId,
@@ -58,7 +56,65 @@ export class DashboardService {
           status: 'PENDING',
         },
       }),
+
+      this.prisma.orderItem.findMany({
+        where: {
+          order: {
+            branchId: user.branchId,
+            status: 'COMPLETED',
+            createdAt: {
+              gte: businessDayStart,
+            },
+          },
+        },
+        select: {
+          quantity: true,
+          product: {
+            select: {
+              category: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      }),
     ]);
+
+    const categoryMap = new Map<
+      string,
+      {
+        categoryId: string;
+        categoryName: string;
+        quantitySold: number;
+      }
+    >();
+
+    for (const item of items) {
+      const category = item.product?.category;
+
+      if (!category) continue;
+
+      const existing = categoryMap.get(category.id);
+
+      if (existing) {
+        existing.quantitySold += item.quantity;
+      } else {
+        categoryMap.set(category.id, {
+          categoryId: category.id,
+          categoryName: category.name,
+          quantitySold: item.quantity,
+        });
+      }
+    }
+
+    const categorySales = Array.from(categoryMap.values()).sort(
+      (a, b) => b.quantitySold - a.quantitySold,
+    );
+
+    const topCategory = categorySales[0] ?? null;
 
     return {
       message: `Welcome ${user.role}`,
@@ -67,6 +123,10 @@ export class DashboardService {
         role: user.role,
         totalOrders,
         pendingKots,
+
+        topCategory,
+
+        categorySales,
       },
     };
   }

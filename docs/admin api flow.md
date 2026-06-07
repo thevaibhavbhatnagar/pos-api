@@ -1773,7 +1773,6 @@ Creates a new order with items, computes billing details (using database product
 | `items` | `object[]` | Yes | Array of items to buy. Must contain at least 1 item. |
 | `items[].productId` | `string` | Yes | Product UUID. |
 | `items[].quantity` | `number` | Yes | Quantity to buy. |
-| `items[].price` | `number` | Yes | Declared product price. |
 | `items[].addonIds` | `string[]` | No | Optional array of active addon UUIDs. |
 
 ##### Example Payload
@@ -1789,7 +1788,6 @@ Creates a new order with items, computes billing details (using database product
     {
       "productId": "prod-uuid-1",
       "quantity": 2,
-      "price": 5.00,
       "addonIds": ["b3f0c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"]
     }
   ]
@@ -2240,7 +2238,24 @@ Returns branch-specific order summaries and pending work statistics.
     "dashboardType": "BRANCH",
     "role": "CASHIER",
     "totalOrders": 47,
-    "pendingKots": 3
+    "pendingKots": 3,
+    "topCategory": {
+      "categoryId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+      "categoryName": "Fast Food",
+      "quantitySold": 82
+    },
+    "categorySales": [
+      {
+        "categoryId": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+        "categoryName": "Fast Food",
+        "quantitySold": 82
+      },
+      {
+        "categoryId": "e9876f2d-8384-47b2-bd77-df8203f191b2",
+        "categoryName": "Appetizers",
+        "quantitySold": 45
+      }
+    ]
   }
 }
 ```
@@ -2253,6 +2268,11 @@ Returns branch-specific order summaries and pending work statistics.
 | `totalBranches` | `number` | Total branches in the system (Central view only). |
 | `totalOrders` | `number` | Total orders placed at the user's branch (Branch view only). |
 | `pendingKots` | `number` | Count of KOT tickets currently in `PENDING` status at the user's branch (Branch view only). |
+| `topCategory` | `object \ null` | The category that generated the highest volume of quantity sold during the current business day (Branch view only). |
+| `topCategory.categoryId` | `string` | The unique ID of the top category. |
+| `topCategory.categoryName` | `string` | The display name of the top category. |
+| `topCategory.quantitySold` | `number` | The total quantity of items sold in this category. |
+| `categorySales` | `object[]` | An array containing quantity sold summaries for all categories during the current business day (Branch view only). |
 
 ---
 
