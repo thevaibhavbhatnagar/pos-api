@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AddonService } from './addon.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -18,8 +19,10 @@ import { UpdateAddonDto } from './dto/update-addon.dto';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { DeleteEntity } from 'src/common/deletion-guard/delete-entity.decorator';
+import { DeleteRelationInterceptor } from 'src/common/deletion-guard/delete-relation.interceptor';
 
 @Controller('api/v1/addons')
+@UseInterceptors(DeleteRelationInterceptor)
 export class AddonController {
   constructor(private readonly addonsService: AddonService) {}
 
@@ -63,7 +66,7 @@ export class AddonController {
   @Roles('SUPER_ADMIN', 'ADMIN')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
-  @DeleteEntity('addons')
+  @DeleteEntity('addon')
   async deleteAddon(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.addonsService.deleteAddon(id);
   }

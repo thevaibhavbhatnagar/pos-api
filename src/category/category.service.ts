@@ -18,10 +18,12 @@ export class CategoryService {
     name: true,
     isActive: true,
     createdAt: true,
+    deletedAt: true,
   } as const;
 
   async getCategoryLookup() {
     const categories = await this.prisma.category.findMany({
+      where: { deletedAt: null, isActive: true },
       select: {
         id: true,
         name: true,
@@ -45,6 +47,7 @@ export class CategoryService {
 
     const [categories, total] = await this.prisma.$transaction([
       this.prisma.category.findMany({
+        where: { deletedAt: null },
         select: {
           id: true,
           name: true,
@@ -55,7 +58,7 @@ export class CategoryService {
         take: limit,
         skip,
       }),
-      this.prisma.category.count(),
+      this.prisma.category.count({ where: { deletedAt: null } }),
     ]);
 
     return {
@@ -71,8 +74,8 @@ export class CategoryService {
   }
 
   async findOne(id: string) {
-    const category = await this.prisma.category.findUnique({
-      where: { id },
+    const category = await this.prisma.category.findFirst({
+      where: { id, deletedAt: null },
       select: this.categorySelect,
     });
 
@@ -99,6 +102,14 @@ export class CategoryService {
   }
 
   async updateCategory(id: string, dto: UpdateCategoryDto) {
+    await ensureExists(
+      this.prisma.category.findFirst({
+        where: { id, deletedAt: null },
+        select: { id: true },
+      }),
+      'Category not found',
+    );
+
     const category = await this.prisma.category.update({
       where: { id },
       data: dto,
@@ -111,9 +122,17 @@ export class CategoryService {
   }
 
   async deleteCategory(id: string) {
-  
-    const category = await this.prisma.category.delete({
+    await ensureExists(
+      this.prisma.category.findFirst({
+        where: { id, deletedAt: null },
+        select: { id: true },
+      }),
+      'Category not found',
+    );
+
+    const category = await this.prisma.category.update({
       where: { id },
+      data: { deletedAt: new Date() },
       select: this.categorySelect,
     });
     return {

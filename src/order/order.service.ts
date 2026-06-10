@@ -99,7 +99,7 @@ export class OrderService {
   private ensureBranchExists(tx: Prisma.TransactionClient, id: string) {
     return ensureExists(
       tx.branch.findFirst({
-        where: { id },
+        where: { id, deletedAt: null },
         select: { id: true },
       }),
       'branch not found',
@@ -201,9 +201,11 @@ export class OrderService {
       const orderItems = await Promise.all(
         dto.items.map(async (item) => {
           // Fetch product
-          const product = await tx.product.findUnique({
+          const product = await tx.product.findFirst({
             where: {
               id: item.productId,
+              isActive: true,
+              deletedAt: null,
             },
           });
 
@@ -221,6 +223,7 @@ export class OrderService {
                     in: item.addonIds,
                   },
                   isActive: true,
+                  deletedAt: null,
                 },
               })
             : [];
@@ -465,9 +468,11 @@ export class OrderService {
       const newOrderItems = await Promise.all(
         dto.items.map(async (item) => {
           // Fetch Product
-          const product = await tx.product.findUnique({
+          const product = await tx.product.findFirst({
             where: {
               id: item.productId,
+              isActive: true,
+              deletedAt: null,
             },
           });
 
@@ -485,6 +490,7 @@ export class OrderService {
                     in: item.addonIds,
                   },
                   isActive: true,
+                  deletedAt: null,
                 },
               })
             : [];

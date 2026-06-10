@@ -521,10 +521,6 @@ export type ModuleUncheckedCreateNestedManyWithoutParentInput = {
   connect?: Prisma.ModuleWhereUniqueInput | Prisma.ModuleWhereUniqueInput[]
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type ModuleUpdateOneWithoutChildrenNestedInput = {
   create?: Prisma.XOR<Prisma.ModuleCreateWithoutChildrenInput, Prisma.ModuleUncheckedCreateWithoutChildrenInput>
   connectOrCreate?: Prisma.ModuleCreateOrConnectWithoutChildrenInput

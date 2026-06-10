@@ -33,8 +33,13 @@ export class AuthService {
   // Login function to authenticate an existing user
   async login(dto: LoginDto) {
     // Find user in the database by email
-    const user = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: dto.email,
+        deletedAt: null,
+        role: { deletedAt: null },
+        OR: [{ branchId: null }, { branch: { deletedAt: null } }],
+      },
       include: { role: true, branch: true },
     });
 
@@ -74,12 +79,13 @@ export class AuthService {
   }
 
   async getUserPermissions(userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+    const user = await this.prisma.user.findFirst({
+      where: { id: userId, deletedAt: null, role: { deletedAt: null } },
       include: {
         role: {
           include: {
             permissions: {
+              where: { deletedAt: null },
               include: {
                 permission: {
                   include: { module: true },
@@ -95,7 +101,9 @@ export class AuthService {
 
     const groupedMap = new Map<string, GroupedModule>();
 
-    const modules = await this.prisma.module.findMany();
+    const modules = await this.prisma.module.findMany({
+      where: { deletedAt: null },
+    });
 
     for (const mod of modules) {
       groupedMap.set(mod.id, {

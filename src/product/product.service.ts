@@ -32,6 +32,12 @@ export class ProductService {
     imagePublicId: true,
     category: { select: { id: true, name: true } },
     productAddons: {
+      where: {
+        addon: {
+          deletedAt: null,
+          isActive: true,
+        },
+      },
       select: {
         addon: {
           select: {
@@ -46,6 +52,7 @@ export class ProductService {
     price: true,
     isActive: true,
     createdAt: true,
+    deletedAt: true,
   } as const;
 
   private formatProduct(product: any) {
@@ -58,7 +65,7 @@ export class ProductService {
   private ensureCategoriesExists(tx: Prisma.TransactionClient, id: string) {
     return ensureExists(
       tx.category.findFirst({
-        where: { id, isActive: true },
+        where: { id, isActive: true, deletedAt: null },
         select: { id: true },
       }),
       'category not found',
@@ -67,6 +74,7 @@ export class ProductService {
 
   async getProductLookup() {
     const products = await this.prisma.product.findMany({
+      where: { deletedAt: null, isActive: true },
       select: {
         id: true,
         name: true,
@@ -83,7 +91,11 @@ export class ProductService {
 
   async getProductByCategory(category_id: string) {
     const products = await this.prisma.product.findMany({
-      where: category_id ? { categoryId: category_id } : {},
+      where: {
+        deletedAt: null,
+        isActive: true,
+        ...(category_id ? { categoryId: category_id } : {}),
+      },
       select: this.productSelect,
       orderBy: { createdAt: 'desc' },
     });
@@ -102,12 +114,13 @@ export class ProductService {
 
     const [products, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
+        where: { deletedAt: null },
         select: this.productSelect,
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip,
       }),
-      this.prisma.product.count(),
+      this.prisma.product.count({ where: { deletedAt: null } }),
     ]);
 
     return {
@@ -123,8 +136,8 @@ export class ProductService {
   }
 
   async findOne(id: string) {
-    const product = await this.prisma.product.findUnique({
-      where: { id },
+    const product = await this.prisma.product.findFirst({
+      where: { id, deletedAt: null },
       select: this.productSelect,
     });
 
@@ -151,6 +164,7 @@ export class ProductService {
             in: addonIds,
           },
           isActive: true,
+          deletedAt: null,
         },
       });
 
@@ -183,8 +197,8 @@ export class ProductService {
 
     // Ensure product exists
     await ensureExists(
-      this.prisma.product.findUnique({
-        where: { id },
+      this.prisma.product.findFirst({
+        where: { id, deletedAt: null },
         select: { id: true },
       }),
       'Product not found',
@@ -203,6 +217,7 @@ export class ProductService {
             in: addonIds,
           },
           isActive: true,
+          deletedAt: null,
         },
       });
 
@@ -262,8 +277,8 @@ export class ProductService {
     });
 
     // Fetch updated product with relations
-    const updatedProduct = await this.prisma.product.findUnique({
-      where: { id },
+    const updatedProduct = await this.prisma.product.findFirst({
+      where: { id, deletedAt: null },
       select: this.productSelect,
     });
 
@@ -274,8 +289,17 @@ export class ProductService {
   }
 
   async deleteProduct(id: string) {
-    const product = await this.prisma.product.delete({
+    await ensureExists(
+      this.prisma.product.findFirst({
+        where: { id, deletedAt: null },
+        select: { id: true },
+      }),
+      'Product not found',
+    );
+
+    const product = await this.prisma.product.update({
       where: { id },
+      data: { deletedAt: new Date() },
       select: this.productSelect,
     });
     return {

@@ -19,8 +19,11 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { DeleteEntity } from 'src/common/deletion-guard/delete-entity.decorator';
+import { DeleteRelationInterceptor } from 'src/common/deletion-guard/delete-relation.interceptor';
 
 @Controller('api/v1/products')
+@UseInterceptors(DeleteRelationInterceptor)
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
@@ -69,6 +72,7 @@ export class ProductController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   @Roles('ADMIN')
+  @DeleteEntity('product')
   async deleteProduct(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.productService.deleteProduct(id);
   }

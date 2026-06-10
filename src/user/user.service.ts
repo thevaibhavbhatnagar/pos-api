@@ -25,6 +25,16 @@ export class UserService {
     );
   }
 
+  private ensureBranchExists(tx: Prisma.TransactionClient, id: string) {
+    return ensureExists(
+      tx.branch.findFirst({
+        where: { id, deletedAt: null },
+        select: { id: true },
+      }),
+      'branch not found',
+    );
+  }
+
   async findAll(page: number = 1, limit: number = 10) {
     // safety
     page = Math.max(1, Number(page) || 1);
@@ -35,7 +45,9 @@ export class UserService {
     const [users, total] = await this.prisma.$transaction([
       this.prisma.user.findMany({
         where: {
+          deletedAt: null,
           role: {
+            deletedAt: null,
             name: {
               not: 'SUPER_ADMIN',
             },
@@ -66,7 +78,9 @@ export class UserService {
       }),
       this.prisma.user.count({
         where: {
+          deletedAt: null,
           role: {
+            deletedAt: null,
             name: {
               not: 'SUPER_ADMIN',
             },
@@ -88,8 +102,8 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
+    const user = await this.prisma.user.findFirst({
+      where: { id, deletedAt: null },
       select: {
         id: true,
         email: true,
@@ -126,9 +140,10 @@ export class UserService {
   }
 
   async create(dto: CreateUserDto) {
-    const role = await this.prisma.role.findUnique({
+    const role = await this.prisma.role.findFirst({
       where: {
         id: dto.roleId,
+        deletedAt: null,
       },
     });
 
@@ -137,8 +152,8 @@ export class UserService {
     }
 
     // Check if a user with the given email already exists
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+    const existingUser = await this.prisma.user.findFirst({
+      where: { email: dto.email, deletedAt: null },
     });
 
     // If user exists, throw a conflict exception
@@ -147,6 +162,9 @@ export class UserService {
     }
 
     await this.ensureRoleExists(this.prisma, dto.roleId);
+    if (dto.branchId) {
+      await this.ensureBranchExists(this.prisma, dto.branchId);
+    }
 
     // Hash the user's password before saving it to the database
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -172,8 +190,8 @@ export class UserService {
   }
 
   async update(id: string, dto: UpdateUserDto) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { id },
+    const existingUser = await this.prisma.user.findFirst({
+      where: { id, deletedAt: null },
       include: {
         role: true,
       },
@@ -190,19 +208,24 @@ export class UserService {
 
     // Prevent assigning SUPER_ADMIN role
     if (dto.roleId) {
-      const role = await this.prisma.role.findUnique({
+      const role = await this.prisma.role.findFirst({
         where: {
           id: dto.roleId,
+          deletedAt: null,
         },
       });
 
-      if (!role || role.deletedAt) {
+      if (!role) {
         throw new NotFoundException('Role not found');
       }
 
       if (role.name === 'SUPER_ADMIN') {
         throw new ConflictException('SUPER_ADMIN role cannot be assigned');
       }
+    }
+
+    if (dto.branchId) {
+      await this.ensureBranchExists(this.prisma, dto.branchId);
     }
 
     const user = await this.prisma.user.update({
@@ -224,8 +247,8 @@ export class UserService {
   }
 
   async remove(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
+    const user = await this.prisma.user.findFirst({
+      where: { id, deletedAt: null },
       include: {
         role: true,
       },
@@ -236,7 +259,10 @@ export class UserService {
     }
 
     await this.findOne(id);
-    await this.prisma.user.delete({ where: { id } });
+    await this.prisma.user.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
     return { message: 'User deleted successfully' };
   }
 }

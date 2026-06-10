@@ -17,6 +17,7 @@ export class BranchService {
     id: true,
     name: true,
     createdAt: true,
+    deletedAt: true,
   } as const;
 
   // Ensure branch exists
@@ -33,6 +34,7 @@ export class BranchService {
 
   async getPublicBranches() {
     const branches = await this.prisma.branch.findMany({
+      where: { deletedAt: null },
       select: {
         id: true,
         name: true,
@@ -56,6 +58,7 @@ export class BranchService {
 
     const [branches, total] = await this.prisma.$transaction([
       this.prisma.branch.findMany({
+        where: { deletedAt: null },
         select: {
           id: true,
           name: true,
@@ -65,7 +68,7 @@ export class BranchService {
         take: limit,
         skip,
       }),
-      this.prisma.branch.count(),
+      this.prisma.branch.count({ where: { deletedAt: null } }),
     ]);
 
     return {
@@ -81,8 +84,8 @@ export class BranchService {
   }
 
   async findOne(id: string) {
-    const branch = await this.prisma.branch.findUnique({
-      where: { id },
+    const branch = await this.prisma.branch.findFirst({
+      where: { id, deletedAt: null },
       select: this.branchSelect,
     });
 
@@ -109,6 +112,14 @@ export class BranchService {
   }
 
   async updateBranch(id: string, dto: UpdateBranchDto) {
+    await ensureExists(
+      this.prisma.branch.findFirst({
+        where: { id, deletedAt: null },
+        select: { id: true },
+      }),
+      'Branch not found',
+    );
+
     const branch = await this.prisma.branch.update({
       where: { id },
       data: dto,
@@ -124,8 +135,17 @@ export class BranchService {
     // branch validation
     // await this.ensureBranchExists(id);
 
-    const branch = await this.prisma.branch.delete({
+    await ensureExists(
+      this.prisma.branch.findFirst({
+        where: { id, deletedAt: null },
+        select: { id: true },
+      }),
+      'Branch not found',
+    );
+
+    const branch = await this.prisma.branch.update({
       where: { id },
+      data: { deletedAt: new Date() },
       select: this.branchSelect,
     });
     return {

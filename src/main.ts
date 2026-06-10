@@ -5,12 +5,9 @@ import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // (CORS)
   app.enableCors({
-    origin: [process.env.FRONTEND_URL].filter(Boolean),
+    origin: ['http://localhost:3001', 'https://pos-web-pi.vercel.app'],
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Authorization',
   });
 
   app.useGlobalFilters(new PrismaExceptionFilter());

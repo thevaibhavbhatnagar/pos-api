@@ -21,7 +21,9 @@ export class DashboardService {
   async getDashboardStats(user: any) {
     // CENTRAL DASHBOARD
     if (!user.branchId) {
-      const totalBranches = await this.prisma.branch.count();
+      const totalBranches = await this.prisma.branch.count({
+        where: { deletedAt: null },
+      });
 
       return {
         message: `Welcome ${user.role}`,

@@ -31,6 +31,7 @@ export type BranchMinAggregateOutputType = {
   phone: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type BranchMaxAggregateOutputType = {
@@ -40,6 +41,7 @@ export type BranchMaxAggregateOutputType = {
   phone: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type BranchCountAggregateOutputType = {
@@ -49,6 +51,7 @@ export type BranchCountAggregateOutputType = {
   phone: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
   _all: number
 }
 
@@ -60,6 +63,7 @@ export type BranchMinAggregateInputType = {
   phone?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type BranchMaxAggregateInputType = {
@@ -69,6 +73,7 @@ export type BranchMaxAggregateInputType = {
   phone?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type BranchCountAggregateInputType = {
@@ -78,6 +83,7 @@ export type BranchCountAggregateInputType = {
   phone?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -160,6 +166,7 @@ export type BranchGroupByOutputType = {
   phone: string | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
   _count: BranchCountAggregateOutputType | null
   _min: BranchMinAggregateOutputType | null
   _max: BranchMaxAggregateOutputType | null
@@ -190,6 +197,7 @@ export type BranchWhereInput = {
   phone?: Prisma.StringNullableFilter<"Branch"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Branch"> | Date | string | null
   orders?: Prisma.OrdersListRelationFilter
   users?: Prisma.UserListRelationFilter
   kots?: Prisma.KotListRelationFilter
@@ -202,6 +210,7 @@ export type BranchOrderByWithRelationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   orders?: Prisma.OrdersOrderByRelationAggregateInput
   users?: Prisma.UserOrderByRelationAggregateInput
   kots?: Prisma.KotOrderByRelationAggregateInput
@@ -217,6 +226,7 @@ export type BranchWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringNullableFilter<"Branch"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Branch"> | Date | string | null
   orders?: Prisma.OrdersListRelationFilter
   users?: Prisma.UserListRelationFilter
   kots?: Prisma.KotListRelationFilter
@@ -229,6 +239,7 @@ export type BranchOrderByWithAggregationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BranchCountOrderByAggregateInput
   _max?: Prisma.BranchMaxOrderByAggregateInput
   _min?: Prisma.BranchMinOrderByAggregateInput
@@ -244,6 +255,7 @@ export type BranchScalarWhereWithAggregatesInput = {
   phone?: Prisma.StringNullableWithAggregatesFilter<"Branch"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Branch"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Branch"> | Date | string | null
 }
 
 export type BranchCreateInput = {
@@ -253,6 +265,7 @@ export type BranchCreateInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   orders?: Prisma.OrdersCreateNestedManyWithoutBranchInput
   users?: Prisma.UserCreateNestedManyWithoutBranchInput
   kots?: Prisma.KotCreateNestedManyWithoutBranchInput
@@ -265,6 +278,7 @@ export type BranchUncheckedCreateInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   orders?: Prisma.OrdersUncheckedCreateNestedManyWithoutBranchInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutBranchInput
   kots?: Prisma.KotUncheckedCreateNestedManyWithoutBranchInput
@@ -277,6 +291,7 @@ export type BranchUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   orders?: Prisma.OrdersUpdateManyWithoutBranchNestedInput
   users?: Prisma.UserUpdateManyWithoutBranchNestedInput
   kots?: Prisma.KotUpdateManyWithoutBranchNestedInput
@@ -289,6 +304,7 @@ export type BranchUncheckedUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   orders?: Prisma.OrdersUncheckedUpdateManyWithoutBranchNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutBranchNestedInput
   kots?: Prisma.KotUncheckedUpdateManyWithoutBranchNestedInput
@@ -301,6 +317,7 @@ export type BranchCreateManyInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type BranchUpdateManyMutationInput = {
@@ -310,6 +327,7 @@ export type BranchUpdateManyMutationInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BranchUncheckedUpdateManyInput = {
@@ -319,6 +337,7 @@ export type BranchUncheckedUpdateManyInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BranchCountOrderByAggregateInput = {
@@ -328,6 +347,7 @@ export type BranchCountOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type BranchMaxOrderByAggregateInput = {
@@ -337,6 +357,7 @@ export type BranchMaxOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type BranchMinOrderByAggregateInput = {
@@ -346,6 +367,7 @@ export type BranchMinOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type BranchNullableScalarRelationFilter = {
@@ -411,6 +433,7 @@ export type BranchCreateWithoutKotsInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   orders?: Prisma.OrdersCreateNestedManyWithoutBranchInput
   users?: Prisma.UserCreateNestedManyWithoutBranchInput
 }
@@ -422,6 +445,7 @@ export type BranchUncheckedCreateWithoutKotsInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   orders?: Prisma.OrdersUncheckedCreateNestedManyWithoutBranchInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutBranchInput
 }
@@ -449,6 +473,7 @@ export type BranchUpdateWithoutKotsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   orders?: Prisma.OrdersUpdateManyWithoutBranchNestedInput
   users?: Prisma.UserUpdateManyWithoutBranchNestedInput
 }
@@ -460,6 +485,7 @@ export type BranchUncheckedUpdateWithoutKotsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   orders?: Prisma.OrdersUncheckedUpdateManyWithoutBranchNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutBranchNestedInput
 }
@@ -471,6 +497,7 @@ export type BranchCreateWithoutOrdersInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   users?: Prisma.UserCreateNestedManyWithoutBranchInput
   kots?: Prisma.KotCreateNestedManyWithoutBranchInput
 }
@@ -482,6 +509,7 @@ export type BranchUncheckedCreateWithoutOrdersInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   users?: Prisma.UserUncheckedCreateNestedManyWithoutBranchInput
   kots?: Prisma.KotUncheckedCreateNestedManyWithoutBranchInput
 }
@@ -509,6 +537,7 @@ export type BranchUpdateWithoutOrdersInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   users?: Prisma.UserUpdateManyWithoutBranchNestedInput
   kots?: Prisma.KotUpdateManyWithoutBranchNestedInput
 }
@@ -520,6 +549,7 @@ export type BranchUncheckedUpdateWithoutOrdersInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   users?: Prisma.UserUncheckedUpdateManyWithoutBranchNestedInput
   kots?: Prisma.KotUncheckedUpdateManyWithoutBranchNestedInput
 }
@@ -531,6 +561,7 @@ export type BranchCreateWithoutUsersInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   orders?: Prisma.OrdersCreateNestedManyWithoutBranchInput
   kots?: Prisma.KotCreateNestedManyWithoutBranchInput
 }
@@ -542,6 +573,7 @@ export type BranchUncheckedCreateWithoutUsersInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   orders?: Prisma.OrdersUncheckedCreateNestedManyWithoutBranchInput
   kots?: Prisma.KotUncheckedCreateNestedManyWithoutBranchInput
 }
@@ -569,6 +601,7 @@ export type BranchUpdateWithoutUsersInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   orders?: Prisma.OrdersUpdateManyWithoutBranchNestedInput
   kots?: Prisma.KotUpdateManyWithoutBranchNestedInput
 }
@@ -580,6 +613,7 @@ export type BranchUncheckedUpdateWithoutUsersInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   orders?: Prisma.OrdersUncheckedUpdateManyWithoutBranchNestedInput
   kots?: Prisma.KotUncheckedUpdateManyWithoutBranchNestedInput
 }
@@ -640,6 +674,7 @@ export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   phone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   orders?: boolean | Prisma.Branch$ordersArgs<ExtArgs>
   users?: boolean | Prisma.Branch$usersArgs<ExtArgs>
   kots?: boolean | Prisma.Branch$kotsArgs<ExtArgs>
@@ -653,6 +688,7 @@ export type BranchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   phone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["branch"]>
 
 export type BranchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -662,6 +698,7 @@ export type BranchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   phone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["branch"]>
 
 export type BranchSelectScalar = {
@@ -671,9 +708,10 @@ export type BranchSelectScalar = {
   phone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }
 
-export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "address" | "phone" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
+export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "address" | "phone" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["branch"]>
 export type BranchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orders?: boolean | Prisma.Branch$ordersArgs<ExtArgs>
   users?: boolean | Prisma.Branch$usersArgs<ExtArgs>
@@ -697,6 +735,7 @@ export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     phone: string | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["branch"]>
   composites: {}
 }
@@ -1129,6 +1168,7 @@ export interface BranchFieldRefs {
   readonly phone: Prisma.FieldRef<"Branch", 'String'>
   readonly createdAt: Prisma.FieldRef<"Branch", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Branch", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Branch", 'DateTime'>
 }
     
 

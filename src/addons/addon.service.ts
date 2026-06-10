@@ -18,12 +18,14 @@ export class AddonService {
     price: true,
     isActive: true,
     createdAt: true,
+    deletedAt: true,
   } as const;
 
   async getAddonLookup() {
     const addons = await this.prisma.addon.findMany({
       where: {
         isActive: true,
+        deletedAt: null,
       },
       select: this.addonSelect,
       orderBy: {
@@ -46,12 +48,13 @@ export class AddonService {
 
     const [addons, total] = await this.prisma.$transaction([
       this.prisma.addon.findMany({
+        where: { deletedAt: null },
         select: this.addonSelect,
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip,
       }),
-      this.prisma.addon.count(),
+      this.prisma.addon.count({ where: { deletedAt: null } }),
     ]);
 
     return {
@@ -67,8 +70,8 @@ export class AddonService {
   }
 
   async findOne(id: string) {
-    const addon = await this.prisma.addon.findUnique({
-      where: { id },
+    const addon = await this.prisma.addon.findFirst({
+      where: { id, deletedAt: null },
       select: this.addonSelect,
     });
 
@@ -86,6 +89,7 @@ export class AddonService {
     const existingAddon = await this.prisma.addon.findFirst({
       where: {
         name: dto.name,
+        deletedAt: null,
       },
     });
 
@@ -106,8 +110,8 @@ export class AddonService {
 
   async updateAddon(id: string, dto: UpdateAddonDto) {
     await ensureExists(
-      this.prisma.addon.findUnique({
-        where: { id },
+      this.prisma.addon.findFirst({
+        where: { id, deletedAt: null },
         select: { id: true },
       }),
       'Addon not found',
@@ -117,6 +121,7 @@ export class AddonService {
       const existingAddon = await this.prisma.addon.findFirst({
         where: {
           name: dto.name,
+          deletedAt: null,
           NOT: {
             id,
           },
@@ -142,8 +147,8 @@ export class AddonService {
 
   async deleteAddon(id: string) {
     await ensureExists(
-      this.prisma.addon.findUnique({
-        where: { id },
+      this.prisma.addon.findFirst({
+        where: { id, deletedAt: null },
         select: { id: true },
       }),
       'Addon not found',
@@ -153,6 +158,7 @@ export class AddonService {
       where: { id },
       data: {
         isActive: false,
+        deletedAt: new Date(),
       },
       select: this.addonSelect,
     });

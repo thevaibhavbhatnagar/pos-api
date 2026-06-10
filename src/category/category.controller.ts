@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -17,8 +18,10 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { DeleteEntity } from 'src/common/deletion-guard/delete-entity.decorator';
+import { DeleteRelationInterceptor } from 'src/common/deletion-guard/delete-relation.interceptor';
 
 @Controller('api/v1/categories')
+@UseInterceptors(DeleteRelationInterceptor)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

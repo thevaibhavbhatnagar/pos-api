@@ -114,8 +114,8 @@ export class ReportsService {
   ) {
     // Validate branch exists
     await ensureExists(
-      this.prisma.branch.findUnique({
-        where: { id: branchId },
+      this.prisma.branch.findFirst({
+        where: { id: branchId, deletedAt: null },
       }),
       'Branch not found',
     );
@@ -198,4 +198,3 @@ export class ReportsService {
     );
   }
 }
-

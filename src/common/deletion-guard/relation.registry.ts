@@ -6,7 +6,7 @@ export const RELATION_REGISTRY: Record<string, Record<string, Counter>> = {
   category: {
     products: (p, id) =>
       p.product.count({
-        where: { categoryId: id },
+        where: { categoryId: id, deletedAt: null },
       }),
   },
 
@@ -23,7 +23,19 @@ export const RELATION_REGISTRY: Record<string, Record<string, Counter>> = {
 
     productAddons: (p, id) =>
       p.productAddon.count({
-        where: { productId: id },
+        where: { productId: id, addon: { deletedAt: null } },
+      }),
+  },
+
+  addon: {
+    productAddons: (p, id) =>
+      p.productAddon.count({
+        where: { addonId: id },
+      }),
+
+    orderItemAddons: (p, id) =>
+      p.orderItemAddon.count({
+        where: { addonId: id },
       }),
   },
 
@@ -35,7 +47,7 @@ export const RELATION_REGISTRY: Record<string, Record<string, Counter>> = {
 
     users: (p, id) =>
       p.user.count({
-        where: { branchId: id },
+        where: { branchId: id, deletedAt: null },
       }),
 
     kots: (p, id) =>
@@ -48,6 +60,13 @@ export const RELATION_REGISTRY: Record<string, Record<string, Counter>> = {
     orders: (p, id) =>
       p.orders.count({
         where: { userId: id },
+      }),
+  },
+
+  role: {
+    users: (p, id) =>
+      p.user.count({
+        where: { roleId: id, deletedAt: null },
       }),
   },
 };
